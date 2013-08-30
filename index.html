@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html ng-app="angular-login">
+  <head>
+    <title>angular-login-service</title>
+
+    <!-- BootstrapCDN -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet"> -->
+
+    <!-- Libraries required -->
+    <script type="text/javascript" src="libs/angular.js"></script>
+    <script type="text/javascript" src="libs/angular-animate.js"></script>
+    <script type="text/javascript" src="libs/angular-mocks.js"></script>
+    <!-- https://github.com/angular-ui/ui-router -->
+    <script type="text/javascript" src="libs/angular-ui-router.js"></script>
+
+    <!-- roles config -->
+    <script type="text/javascript" src="src/routingConfig.js"></script>
+
+    <!-- Angular app and deps -->
+    <script type="text/javascript" src="src/app.js"></script>
+    <script type="text/javascript" src="src/grandfather.js"></script>
+    <script type="text/javascript" src="src/login-service.js"></script>
+    <script type="text/javascript" src="src/home/home.js"></script>
+
+  </head>
+  <body ng-controller="BodyController">
+    <div class="container">
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li ng-class="{ active: $state.is('app.home') }">
+              <a href="" ng-click="$state.go('app.home')">Home</a>
+            </li>
+            <li ng-class="{ active: $state.is('app.list') }">
+              <a href="" ng-click="$state.go('app.list')">List items</a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(loginForm)" ng-hide="loggedIn">
+            <div class="form-group">
+              <input type="text" class="form-control" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" name="password" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-default">Login</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right" ng-show="loggedIn">
+            <li><a>Hello {{ name }}</a></li>
+          </ul>
+        </div>
+      </nav>
+      <ui-view></ui-view>
+    </div>
+  </body>
+</html>

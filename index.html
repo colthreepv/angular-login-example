@@ -26,6 +26,7 @@
     <script type="text/javascript" src="src/grandfather.js"></script>
     <script type="text/javascript" src="src/login-service.js"></script>
     <script type="text/javascript" src="src/home/home.js"></script>
+    <script type="text/javascript" src="src/private/private.js"></script>
 
   </head>
   <body ng-controller="BodyController">
@@ -36,16 +37,16 @@
             <li ng-class="{ active: $state.is('app.home') }">
               <a href="" ng-click="$state.go('app.home')">Home</a>
             </li>
-            <li ng-class="{ active: $state.is('app.list') }">
-              <a href="" ng-click="$state.go('app.list')">List items</a>
+            <li ng-class="{ active: $state.is('app.private') }">
+              <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
             </li>
           </ul>
           <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(loginForm)" ng-hide="loggedIn">
             <div class="form-group">
-              <input type="text" class="form-control" name="username" placeholder="Username">
+              <input type="text" class="form-control" ng-model="username" name="username" placeholder="Username">
             </div>
             <div class="form-group">
-              <input type="password" class="form-control" name="password" placeholder="Password">
+              <input type="password" class="form-control" ng-model="password" name="password" placeholder="Password">
             </div>
             <button type="submit" class="btn btn-default">Login</button>
           </form>

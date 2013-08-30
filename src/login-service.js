@@ -29,12 +29,11 @@ angular.module('loginService', [])
       if (userToken) {
         setHeaders(userToken);
       } else {
-        accessMask = accessLevels;
-        $rootScope.user = { accessMask: accessLevels.anonymous };
+        wrappedService.accessLevels = accessLevels.anon;
       }
     };
 
-    var manageRoutes = function () {
+    var managePermissions = function () {
       // Register routing function.
       $rootScope.$on('$stateChangeStart', function (event, to, toParams, from, fromParams) {
 
@@ -47,8 +46,8 @@ angular.module('loginService', [])
          * If accessLevels is still undefined, it let the user change the state.
          * Grandfather.resolve will either let the user in or reject the promise later!
          */
-        if (accessLevels === undefined) {
-          pendingStateChange = {
+        if (wrappedService.accessLevels === null) {
+          wrappedService.pendingStateChange = {
             to: to,
             toParams: toParams,
             levelsRequired: to.accessLevel
@@ -90,53 +89,52 @@ angular.module('loginService', [])
      * High level, public methods
      */
 
-    var setPermissions = function (userObj) {
-      if (userObj.completed) {
-        userObj.accessMask = (userObj.type === 'bee') ? accessLevels.bee : accessLevels.beekeeper;
-      } else {
-        userObj.accessMask = accessLevels.incompleteUser;
-        $location.path('/register/' + userObj.type + '/complete');
-      }
-      // write the user
-      setLoginData(userObj);
-      // write token
-      setToken(userObj.token);
-      return userObj;
+    var wrappedService = {
+      /**
+       * Custom logic to manually set accessMask goes here
+       *
+       * Commented example shows an userObj coming with a 'completed'
+       * property defining if the user has completed his registration process,
+       * validating his/her email or not.
+       */
+      // if (userObj.completed) {
+      //   userObj.accessLevel = accessLevels.completed;
+      // } else {
+      //   userObj.accessMask = accessLevels.noncompleted;
+      //   $state.go('complete.registration');
+      // }
+      setPermissions: function (userObj) {
+        // write token
+        setToken(userObj.token);
+        return userObj;
+      },
+      loginUser: function (postObj) {
+        var loginPromise = $http.post('/login', postObj)
+          .success(this.setPermissions)
+          .error(function (data, status, headers, config) {
+            if (status === 420) {
+              $rootScope.appError = { title: 'E-Mail non attivata', message: 'Non potrai entrare finchè l\'email non sarà verificata, <a href="#/register/token/' + username + '">clicca qui</a> per richiedere una nuova email di verifica.'};
+            }
+            $rootScope.user = { accessMask: accessLevels.anonymous };
+          });
+        return loginPromise;
+      },
+      logoutUser: function () {
+        $http.get('/logout'); // fire and forget
+        setToken(null);
+        $rootScope.user = undefined;
+        $location.path('/home');
+      },
+      /**
+       * Public properties
+       */
+      accessLevels: null,
+      pendingStateChange: null
     };
 
-    var loginUser = function (username, password) {
-      var loginPromise = $http.post('/api/1/login', { username: username, password: password })
-        .success(setPermissions)
-        .error(function (data, status, headers, config) {
-          if (status === 420) {
-            $rootScope.appError = { title: 'E-Mail non attivata', message: 'Non potrai entrare finchè l\'email non sarà verificata, <a href="#/register/token/' + username + '">clicca qui</a> per richiedere una nuova email di verifica.'};
-          }
-          $rootScope.user = { accessMask: accessLevels.anonymous };
-        });
-      return loginPromise;
-    };
+    getLoginData();
+    managePermissions();
 
-    var logoutUser = function () {
-      $http.get('/logout'); // fire and forget
-      setToken(null);
-      $rootScope.user = undefined;
-      $location.path('/home');
-    };
-
-    /**
-     * Public properties
-     */
-    
-    var accessLevels,
-        pendingStateChange;
-
-    return {
-      setPermissions: setPermissions,
-      loginUser: loginUser,
-      logoutUser: logoutUser,
-      userToken: userToken,
-      accessLevels: accessLevels,
-      pendingStateChange: pendingStateChange
-    };
+    return wrappedService;
   };
 });

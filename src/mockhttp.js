@@ -59,24 +59,30 @@ angular.module('angular-login.mock', ['ngMockE2E'])
       if (angular.isDefined(user) && user.password === formData.password) {
         newToken = randomUUID();
         user.tokens.push(newToken);
-        tokenStorage['newToken'] = formData.username;
+        tokenStorage[newToken] = formData.username;
         localStorage.setItem('userStorage', JSON.stringify(userStorage));
         localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+        return [200, { name: user.name, accessLevel: user.accessLevel, token: newToken }, {}];
+      } else {
+        return [401, 'wrong combination username/password', {}];
       }
-      return [200, { name: user.name, accessLevel: user.accessLevel, token: newToken }, {}];
     });
 
   // fakeUser
   $httpBackend.when('GET', '/user')
     .respond(function (method, url, data, headers) {
+      var queryToken, userObject;
       // if is present in a registered users array.
-      if (headers['X-Token']) {
-        return;
+      if (queryToken = headers['X-Token']) {
+        if (angular.isDefined(tokenStorage[queryToken])) {
+          userObject = userStorage[tokenStorage[queryToken]];
+          return [200, { token: queryToken, name: userObject.name, accessLevel: userObject.accessLevel }, {}];
+        } else {
+          return [401, 'auth token invalid or expired', {}];
+        }
       } else {
         return [401, 'auth token invalid or expired', {}];
       }
-      debugger;
-      return [200, { token: randomUUID(), name: 'John', accessLevel: accessLevels.user }, {}];
     });
 
   // fakeRegister

@@ -9,9 +9,12 @@ angular.module('angular-login', [
 ])
 .config(angular.noop)
 .run(angular.noop)
-.controller('BodyController', function (loginService, $scope, $state, $log) {
-  // Expose $state to the <body> tag
+.controller('BodyController', function (loginService, $scope, $state, $stateParams) {
+  // Expose $state and $stateParams to the <body> tag
   $scope.$state = $state;
+  $scope.$stateParams = $stateParams;
+
+  $scope.userObject = loginService.userObject;
   $scope.loginMe = function (formObj) {
     var loginPromise,
         postObj;

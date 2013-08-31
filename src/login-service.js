@@ -1,7 +1,7 @@
 angular.module('loginService', [])
 .provider('loginService', function () {
   var userToken = localStorage.getItem('userToken'),
-      errorState = 'root';
+      errorState = 'app.error';
 
   this.$get = function ($rootScope, $http, $q, $state) {
     /**
@@ -55,12 +55,15 @@ angular.module('loginService', [])
         }
 
 
-        // Se la route non ha una accessMask specificata, tutti possono accederle
-        if (to.accessMask === undefined || to.accessMask & $rootScope.user.accessMask) {
+        // if the state has undefined accessLevel, anyone can access it.
+        // NOTE: if `wrappedService.accessLevel === undefined` means the service still doesn't know the user accessLevel,
+        // we need to rely on grandfather resolve, so we let the stateChange success, for now.
+        if (to.accessLevel === undefined || wrappedService.accessLevel === undefined || to.accessLevel.bitMask & wrappedService.accessLevel.bitMask) {
           console.log('you are allowed on this page:', to.name);
         } else {
-          $rootScope.notify = { title: 'Non autorizzato', message: 'I tuoi permessi non sono adeguati alla pagina richiesta' };
-          $location.path('/home').replace();
+          event.preventDefault();
+          // test this
+          $state.go(errorState, { error: '401' });
         }
       });
 
@@ -72,16 +75,29 @@ angular.module('loginService', [])
          * So you can setup DIFFERENT redirections based on different promise errors.
          */
         var errorObj;
-        // Nel caso resolve contenga una chiamata diretta ad $http, la risposta rejection è un oggetto
+        // in case the promise given to resolve function is an $http request
+        // the error is a object containing the error and additional informations
         error = (typeof error === 'object') ? error.status.toString() : error;
-        if (error === '401') {
-          $rootScope.notify = { title: 'Sessione scaduta', message: 'Per favore effettua di nuovo il login.' };
-          $location.path('/home').replace();
-          return logoutUser();
+        // there must be a tokenexpired error.
+        if (error === 'tokenexpired') {
+          $state.go(errorState, { error: error });
+          return wrappedService.logoutUser();
         }
-        errorObj = to.redirectMap[error];
-        $rootScope.notify = { title: 'Errore!!!', message: errorObj.message };
-        $location.path(errorObj.url).replace();
+        if (error === 'unauthorized') {
+          return $state.go(errorState, { error: error });
+        }
+        /**
+         * Generic redirect handling.
+         * If a state transition has been prevented and it's not one of the 2 above errors, means it's a
+         * custom error in your application.
+         *
+         * redirectMap should be defined in the $state(s) that can generate transition errors.
+         */
+        if (angular.isDefined(to.redirectMap[error])) {
+          $state.go(to.redirectMap[error], { error: error });
+        } else {
+          throw new Error('redirectMap should be defined in the $state(s) that can generate transition errors');
+        }
       });
     };
 

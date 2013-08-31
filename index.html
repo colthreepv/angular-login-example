@@ -27,6 +27,7 @@
     <script type="text/javascript" src="src/login-service.js"></script>
     <script type="text/javascript" src="src/home/home.js"></script>
     <script type="text/javascript" src="src/private/private.js"></script>
+    <script type="text/javascript" src="src/error/error.js"></script>
 
   </head>
   <body ng-controller="BodyController">
@@ -41,7 +42,7 @@
               <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
             </li>
           </ul>
-          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(loginForm)" ng-hide="loggedIn">
+          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(loginForm)" ng-hide="userObject.name">
             <div class="form-group">
               <input type="text" class="form-control" ng-model="username" name="username" placeholder="Username">
             </div>
@@ -50,8 +51,8 @@
             </div>
             <button type="submit" class="btn btn-default">Login</button>
           </form>
-          <ul class="nav navbar-nav navbar-right" ng-show="loggedIn">
-            <li><a>Hello {{ name }}</a></li>
+          <ul class="nav navbar-nav navbar-right" ng-show="userObject.name">
+            <li><a>Hello {{ userObject.name }}</a></li>
           </ul>
         </div>
       </nav>

@@ -49,8 +49,7 @@ angular.module('loginService', [])
         if (wrappedService.accessLevels === null) {
           wrappedService.pendingStateChange = {
             to: to,
-            toParams: toParams,
-            levelsRequired: to.accessLevel
+            toParams: toParams
           };
         }
 
@@ -63,11 +62,16 @@ angular.module('loginService', [])
         } else {
           event.preventDefault();
           // test this
-          $state.go(errorState, { error: '401' });
+          $state.go(errorState, { error: 'unauthorized' }, { location: false, inherit: false });
         }
       });
 
-      // Manages all the route Erorrs, it could have been much more detailed
+      // Gets triggered when a resolve isn't fulfilled
+      // da aggiungere un caso in cui il resolve da informazioni solo ad un admin e non ad un user
+      // quindi un url ad esempio /resource/admin
+      // anche un url /resource/user
+      // in questo modo si potrà vedere l'error redirect!
+      // anche un caso in cui sono io che faccio fallire una $q cosi si vede l'errore stringa!
       $rootScope.$on('$stateChangeError', function (event, to, toParams, from, fromParams, error) {
         /**
          * This is a very clever way to implement failure redirection.
@@ -80,11 +84,11 @@ angular.module('loginService', [])
         error = (typeof error === 'object') ? error.status.toString() : error;
         // there must be a tokenexpired error.
         if (error === 'tokenexpired') {
-          $state.go(errorState, { error: error });
+          $state.go(errorState, { error: error }, { location: false, inherit: false });
           return wrappedService.logoutUser();
         }
         if (error === 'unauthorized') {
-          return $state.go(errorState, { error: error });
+          return $state.go(errorState, { error: error }, { location: false, inherit: false });
         }
         /**
          * Generic redirect handling.
@@ -119,10 +123,14 @@ angular.module('loginService', [])
       //   userObj.accessMask = accessLevels.noncompleted;
       //   $state.go('complete.registration');
       // }
-      setPermissions: function (userObj) {
-        // write token
-        setToken(userObj.token);
-        return userObj;
+      setPermissions: function (userObject) {
+        // setup token
+        setToken(userObject.token);
+        // update userObject
+        angular.extend(wrappedService.userObject, userObject);
+        // update accessLevel
+        wrappedService.accessLevel = userObject.accessLevel;
+        return userObject;
       },
       loginUser: function (postObj) {
         var loginPromise = $http.post('/login', postObj)
@@ -136,16 +144,17 @@ angular.module('loginService', [])
         return loginPromise;
       },
       logoutUser: function () {
-        $http.get('/logout'); // fire and forget
+        // $http.get('/logout'); // fire and forget
         setToken(null);
-        $rootScope.user = undefined;
-        $location.path('/home');
+        // $rootScope.user = undefined;
+        // $location.path('/home');
       },
       /**
        * Public properties
        */
       accessLevels: null,
-      pendingStateChange: null
+      pendingStateChange: null,
+      userObject: {}
     };
 
     getLoginData();

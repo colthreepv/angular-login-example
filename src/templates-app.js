@@ -1,4 +1,16 @@
-angular.module('templates-app', ['home/home.tpl.html', 'private/private.tpl.html']);
+angular.module('templates-app', ['error/error.tpl.html', 'home/home.tpl.html', 'private/private.tpl.html']);
+
+angular.module("error/error.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("error/error.tpl.html",
+    "<div class=\"jumbotron\">\n" +
+    "  <h1>Error</h1>\n" +
+    "  <div ng-switch=\"$stateParams.error\">\n" +
+    "    <p class=\"text-danger\" ng-switch-when=\"unauthorized\">You are not authorized</p>\n" +
+    "    <p class=\"text-danger\" ng-switch-default>Some error has occurred</p>\n" +
+    "  </div ng-switch>\n" +
+    "</div>\n" +
+    "");
+}]);
 
 angular.module("home/home.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("home/home.tpl.html",

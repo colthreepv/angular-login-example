@@ -4,7 +4,8 @@ angular.module('angular-login', [
   'angular-login.mock',
   // different app sections
   'angular-login.home',
-  'angular-login.private'
+  'angular-login.private',
+  'angular-login.error'
 ])
 .config(angular.noop)
 .run(angular.noop)

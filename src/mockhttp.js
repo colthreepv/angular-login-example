@@ -23,8 +23,8 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 
   if (userStorage === null) {
     userStorage = {
-      'johnm': { name: 'John', password: 'hello', accessLevel: userRoles.user, tokens: [] },
-      'sandrab': { name: 'Sandra', password: 'world', accessLevel: userRoles.admin, tokens: [] }
+      'johnm': { name: 'John', password: 'hello', userRole: userRoles.user, tokens: [] },
+      'sandrab': { name: 'Sandra', password: 'world', userRole: userRoles.admin, tokens: [] }
     };
     localStorage.setItem('userStorage', JSON.stringify(userStorage));
   }

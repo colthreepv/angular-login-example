@@ -29,7 +29,7 @@ angular.module('loginService', [])
       if (userToken) {
         setHeaders(userToken);
       } else {
-        wrappedService.accessLevels = accessLevels.anon;
+        wrappedService.userRole = userRoles.public;
       }
     };
 
@@ -46,7 +46,7 @@ angular.module('loginService', [])
          * If accessLevels is still undefined, it let the user change the state.
          * Grandfather.resolve will either let the user in or reject the promise later!
          */
-        if (wrappedService.accessLevels === null) {
+        if (wrappedService.userRole === null) {
           wrappedService.pendingStateChange = {
             to: to,
             toParams: toParams
@@ -55,9 +55,9 @@ angular.module('loginService', [])
 
 
         // if the state has undefined accessLevel, anyone can access it.
-        // NOTE: if `wrappedService.accessLevel === undefined` means the service still doesn't know the user accessLevel,
+        // NOTE: if `wrappedService.userRole === undefined` means the service still doesn't know the user role,
         // we need to rely on grandfather resolve, so we let the stateChange success, for now.
-        if (to.accessLevel === undefined || wrappedService.accessLevel === undefined || to.accessLevel.bitMask & wrappedService.accessLevel.bitMask) {
+        if (to.accessLevel === undefined || wrappedService.userRole === null || to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
           console.log('you are allowed on this page:', to.name);
         } else {
           event.preventDefault();
@@ -128,8 +128,8 @@ angular.module('loginService', [])
         setToken(userObject.token);
         // update userObject
         angular.extend(wrappedService.userObject, userObject);
-        // update accessLevel
-        wrappedService.accessLevel = userObject.accessLevel;
+        // update userRole
+        wrappedService.userRole = userObject.accessLevel;
         return userObject;
       },
       loginUser: function (postObj) {
@@ -149,10 +149,39 @@ angular.module('loginService', [])
         // $rootScope.user = undefined;
         // $location.path('/home');
       },
+      resolvePendingState: function () {
+        var checkUser = $q.defer(),
+            loginPromise,
+            finalPromise,
+            pendingState = wrappedService.pendingStateChange;
+
+        loginPromise = $http.get('/user');
+        // When the $http is done, we register the http result into setPermissions, `data` parameter goes into loginService.setPermissions
+        loginPromise.success(wrappedService.setPermissions);
+        loginPromise.error(function () {
+          checkUser.reject('tokenexpired');
+        });
+
+        /**
+         * Define another check after the $http is done, this will *Actually* check if current user can access the requested $state
+         */
+        finalPromise = $q.all([loginPromise, checkUser.promise]);
+
+        loginPromise.then(function (result) {
+          // duplicated logic from loginService $stateChangeStart, slightly different, now we *MUST* have the userRole informations.
+          if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
+            checkUser.resolve();
+          } else {
+            checkUser.reject('unauthorized');
+          }
+        });
+        wrappedService.pendingStateChange = null;
+        return finalPromise;
+      },
       /**
        * Public properties
        */
-      accessLevels: null,
+      userRole: null,
       pendingStateChange: null,
       userObject: {}
     };

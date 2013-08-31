@@ -7,7 +7,9 @@ angular.module('angular-login', [
   'angular-login.private',
   'angular-login.error'
 ])
-.config(angular.noop)
+.config(function ($urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+})
 .run(angular.noop)
 .controller('BodyController', function (loginService, $scope, $state, $stateParams) {
   // Expose $state and $stateParams to the <body> tag

@@ -1,0 +1,7 @@
+<div class="jumbotron">
+  <h1 class="text-danger">Error</h1>
+  <div ng-switch="$stateParams.error">
+    <p ng-switch-when="401">You are not authorized</p>
+    <p ng-switch-default>Some error has occurred</p>
+  </div ng-switch>
+</div>

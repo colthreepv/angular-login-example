@@ -5,7 +5,7 @@ Stand-alone project showing how to make a robust angular application serving acc
 
 **Documentation is currently TBD**, patience is a must-have.
 
-Table of Contents
+# Table of Contents
 
   * What this is example for
     * but there are other...?
@@ -47,3 +47,13 @@ Table of Contents
     * $http errors
   * Redirect handling
   * How to declare a $state in this example
+
+# Start the project locally
+
+```bash
+$ git clone https://github.com/mrgamer/angular-login-example.git
+$ cd angular-login-example
+$ npm install && grunt && npm start
+
+# Open browser on http://localhost:8080
+```

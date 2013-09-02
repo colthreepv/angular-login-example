@@ -62,7 +62,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
         tokenStorage[newToken] = formData.username;
         localStorage.setItem('userStorage', JSON.stringify(userStorage));
         localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
-        return [200, { name: user.name, accessLevel: user.accessLevel, token: newToken }, {}];
+        return [200, { name: user.name, userRole: user.userRole, token: newToken }, {}];
       } else {
         return [401, 'wrong combination username/password', {}];
       }
@@ -76,7 +76,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
       if (queryToken = headers['X-Token']) {
         if (angular.isDefined(tokenStorage[queryToken])) {
           userObject = userStorage[tokenStorage[queryToken]];
-          return [200, { token: queryToken, name: userObject.name, accessLevel: userObject.accessLevel }, {}];
+          return [200, { token: queryToken, name: userObject.name, userRole: userObject.userRole }, {}];
         } else {
           return [401, 'auth token invalid or expired', {}];
         }

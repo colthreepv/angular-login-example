@@ -51,13 +51,14 @@ angular.module('loginService', [])
             to: to,
             toParams: toParams
           };
+          return;
         }
 
 
         // if the state has undefined accessLevel, anyone can access it.
         // NOTE: if `wrappedService.userRole === undefined` means the service still doesn't know the user role,
         // we need to rely on grandfather resolve, so we let the stateChange success, for now.
-        if (to.accessLevel === undefined || wrappedService.userRole === null || to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
+        if (to.accessLevel === undefined || to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
           console.log('you are allowed on this page:', to.name);
         } else {
           event.preventDefault();
@@ -129,7 +130,7 @@ angular.module('loginService', [])
         // update userObject
         angular.extend(wrappedService.userObject, userObject);
         // update userRole
-        wrappedService.userRole = userObject.accessLevel;
+        wrappedService.userRole = userObject.userRole;
         return userObject;
       },
       loginUser: function (postObj) {

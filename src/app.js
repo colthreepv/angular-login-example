@@ -21,15 +21,12 @@ angular.module('angular-login', [
     var loginPromise,
         postObj;
 
-    console.log('submit!', formObj);
-
     loginPromise = loginService.loginUser({
       username: $scope.username,
       password: $scope.password
     });
-    loginPromise.success(function (data) {
-      $scope.loggedIn = true;
-      angular.extend($scope, data);
-    });
+  };
+  $scope.logoutMe = function () {
+    $scope.userObject = loginService.logoutUser();
   };
 });

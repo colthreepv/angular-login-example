@@ -1,7 +1,8 @@
 angular.module('loginService', [])
 .provider('loginService', function () {
   var userToken = localStorage.getItem('userToken'),
-      errorState = 'app.error';
+      errorState = 'app.error',
+      logoutState = 'app.home';
 
   this.$get = function ($rootScope, $http, $q, $state) {
     /**
@@ -106,6 +107,10 @@ angular.module('loginService', [])
       });
     };
 
+    var manageLoginError = function (data, status, headers, config) {
+      // custom logic here.
+    };
+
     /**
      * High level, public methods
      */
@@ -136,19 +141,33 @@ angular.module('loginService', [])
       loginUser: function (postObj) {
         var loginPromise = $http.post('/login', postObj)
           .success(this.setPermissions)
-          .error(function (data, status, headers, config) {
-            if (status === 420) {
-              $rootScope.appError = { title: 'E-Mail non attivata', message: 'Non potrai entrare finchè l\'email non sarà verificata, <a href="#/register/token/' + username + '">clicca qui</a> per richiedere una nuova email di verifica.'};
-            }
-            $rootScope.user = { accessMask: accessLevels.anonymous };
-          });
+          /**
+           * manageLoginError is a function to manage partial login states
+           * Example:
+           * user1 registers with email user1@fakedomain.not.exists
+           * user1.userRole = userRoles.noncomplete
+           * After it validates the email:
+           * user1.userRole = userRoles.complete
+           *
+           * /login *might* return a 4xx Error code in case it cannot login
+           * until the email is not validated.
+           * manageLoginError will handle that.
+           */
+          .error(manageLoginError);
         return loginPromise;
       },
       logoutUser: function () {
-        // $http.get('/logout'); // fire and forget
+        /**
+         * De-registers the userToken remotely
+         * then clears the loginService as it was on startup
+         */
+        $http.get('/logout'); // fire and forget
         setToken(null);
-        // $rootScope.user = undefined;
-        // $location.path('/home');
+        wrappedService.userRole = userRoles.public;
+        wrappedService.userObject = {};
+        $state.go(logoutState);
+
+        return wrappedService.userObject;
       },
       resolvePendingState: function () {
         var checkUser = $q.defer(),

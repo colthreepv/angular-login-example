@@ -68,6 +68,28 @@ angular.module('angular-login.mock', ['ngMockE2E'])
       }
     });
 
+  // fakeLogout
+  $httpBackend.when('GET', '/logout')
+    .respond(function (method, url, data, headers) {
+      var queryToken, userTokens;
+
+      if (queryToken = headers['X-Token']) {
+        if (angular.isDefined(tokenStorage[queryToken])) {
+          userTokens = userStorage[tokenStorage[queryToken]].tokens;
+          // Update userStorage AND tokenStorage
+          userTokens.splice(userTokens.indexOf(queryToken));
+          delete tokenStorage[queryToken];
+          localStorage.setItem('userStorage', JSON.stringify(userStorage));
+          localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+          return [200, {}, {}];
+        } else {
+          return [401, 'auth token invalid or expired', {}];
+        }
+      } else {
+        return [401, 'auth token invalid or expired', {}];
+      }
+    });
+
   // fakeUser
   $httpBackend.when('GET', '/user')
     .respond(function (method, url, data, headers) {

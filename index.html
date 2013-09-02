@@ -51,8 +51,14 @@
             </div>
             <button type="submit" class="btn btn-default">Login</button>
           </form>
-          <ul class="nav navbar-nav navbar-right" ng-show="userObject.name">
-            <li><a>Hello {{ userObject.name }}</a></li>
+          <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="userObject.name">
+            <div class="form-group">
+              <label>Hello {{ userObject.name }}</label>
+            </div>
+            <div class="form-group">
+              <button  type="submit" class="btn btn-default">Logout</button>
+            </div>
+          </form>
           </ul>
         </div>
       </nav>

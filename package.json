@@ -1,4 +1,13 @@
 {
+  "name": "angular-login-example",
+  "version": "0.0.1",
+  "keywords": [
+    "angularjs",
+    "angular",
+    "login",
+    "service",
+    "example"
+  ],
   "scripts": {
     "start": "node webserver.js"
   },

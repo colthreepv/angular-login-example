@@ -1,0 +1,32 @@
+angular.module('angular-login', [
+  // login service
+  'loginService',
+  'angular-login.mock',
+  // different app sections
+  'angular-login.home',
+  'angular-login.private',
+  'angular-login.error'
+])
+.config(function ($urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+})
+.run(angular.noop)
+.controller('BodyController', function (loginService, $scope, $state, $stateParams) {
+  // Expose $state and $stateParams to the <body> tag
+  $scope.$state = $state;
+  $scope.$stateParams = $stateParams;
+
+  $scope.userObject = loginService.userObject;
+  $scope.loginMe = function (formObj) {
+    var loginPromise,
+        postObj;
+
+    loginPromise = loginService.loginUser({
+      username: $scope.username,
+      password: $scope.password
+    });
+  };
+  $scope.logoutMe = function () {
+    $scope.userObject = loginService.logoutUser();
+  };
+});

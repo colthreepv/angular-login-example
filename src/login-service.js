@@ -1,0 +1,214 @@
+angular.module('loginService', [])
+.provider('loginService', function () {
+  var userToken = localStorage.getItem('userToken'),
+      errorState = 'app.error',
+      logoutState = 'app.home';
+
+  this.$get = function ($rootScope, $http, $q, $state) {
+    /**
+     * Low-level, private functions.
+     */
+
+    var setHeaders = function (token) {
+      if (!token) {
+        delete $http.defaults.headers.common['X-Token'];
+        return;
+      }
+      $http.defaults.headers.common['X-Token'] = token.toString();
+    };
+
+    var setToken = function (token) {
+      if (!token) {
+        localStorage.removeItem('userToken');
+      } else {
+        localStorage.setItem('userToken', token);
+      }
+      setHeaders(token);
+    };
+
+    var getLoginData = function () {
+      if (userToken) {
+        setHeaders(userToken);
+      } else {
+        wrappedService.userRole = userRoles.public;
+      }
+    };
+
+    var managePermissions = function () {
+      // Register routing function.
+      $rootScope.$on('$stateChangeStart', function (event, to, toParams, from, fromParams) {
+
+        /**
+         * $stateChangeStart is a synchronous check to the accessLevels property
+         * if it's not set, it will setup a pendingStateChange and will let
+         * the grandfather resolve do his job.
+         *
+         * In short:
+         * If accessLevels is still undefined, it let the user change the state.
+         * Grandfather.resolve will either let the user in or reject the promise later!
+         */
+        if (wrappedService.userRole === null) {
+          wrappedService.pendingStateChange = {
+            to: to,
+            toParams: toParams
+          };
+          return;
+        }
+
+
+        // if the state has undefined accessLevel, anyone can access it.
+        // NOTE: if `wrappedService.userRole === undefined` means the service still doesn't know the user role,
+        // we need to rely on grandfather resolve, so we let the stateChange success, for now.
+        if (to.accessLevel === undefined || to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
+          console.log('you are allowed on this page:', to.name);
+        } else {
+          event.preventDefault();
+          // test this
+          $state.go(errorState, { error: 'unauthorized' }, { location: false, inherit: false });
+        }
+      });
+
+      // Gets triggered when a resolve isn't fulfilled
+      // da aggiungere un caso in cui il resolve da informazioni solo ad un admin e non ad un user
+      // quindi un url ad esempio /resource/admin
+      // anche un url /resource/user
+      // in questo modo si potrà vedere l'error redirect!
+      // anche un caso in cui sono io che faccio fallire una $q cosi si vede l'errore stringa!
+      $rootScope.$on('$stateChangeError', function (event, to, toParams, from, fromParams, error) {
+        /**
+         * This is a very clever way to implement failure redirection.
+         * You can use the value of redirectMap, based on the value of the rejection
+         * So you can setup DIFFERENT redirections based on different promise errors.
+         */
+        var errorObj;
+        // in case the promise given to resolve function is an $http request
+        // the error is a object containing the error and additional informations
+        error = (typeof error === 'object') ? error.status.toString() : error;
+        // there must be a tokenexpired error.
+        if (error === 'tokenexpired') {
+          $state.go(errorState, { error: error }, { location: false, inherit: false });
+          return wrappedService.logoutUser();
+        }
+        if (error === 'unauthorized') {
+          return $state.go(errorState, { error: error }, { location: false, inherit: false });
+        }
+        /**
+         * Generic redirect handling.
+         * If a state transition has been prevented and it's not one of the 2 above errors, means it's a
+         * custom error in your application.
+         *
+         * redirectMap should be defined in the $state(s) that can generate transition errors.
+         */
+        if (angular.isDefined(to.redirectMap[error])) {
+          $state.go(to.redirectMap[error], { error: error });
+        } else {
+          throw new Error('redirectMap should be defined in the $state(s) that can generate transition errors');
+        }
+      });
+    };
+
+    var manageLoginError = function (data, status, headers, config) {
+      // custom logic here.
+    };
+
+    /**
+     * High level, public methods
+     */
+
+    var wrappedService = {
+      /**
+       * Custom logic to manually set accessMask goes here
+       *
+       * Commented example shows an userObj coming with a 'completed'
+       * property defining if the user has completed his registration process,
+       * validating his/her email or not.
+       */
+      // if (userObj.completed) {
+      //   userObj.accessLevel = accessLevels.completed;
+      // } else {
+      //   userObj.accessMask = accessLevels.noncompleted;
+      //   $state.go('complete.registration');
+      // }
+      setPermissions: function (userObject) {
+        // setup token
+        setToken(userObject.token);
+        // update userObject
+        angular.extend(wrappedService.userObject, userObject);
+        // update userRole
+        wrappedService.userRole = userObject.userRole;
+        return userObject;
+      },
+      loginUser: function (postObj) {
+        var loginPromise = $http.post('/login', postObj)
+          .success(this.setPermissions)
+          /**
+           * manageLoginError is a function to manage partial login states
+           * Example:
+           * user1 registers with email user1@fakedomain.not.exists
+           * user1.userRole = userRoles.noncomplete
+           * After it validates the email:
+           * user1.userRole = userRoles.complete
+           *
+           * /login *might* return a 4xx Error code in case it cannot login
+           * until the email is not validated.
+           * manageLoginError will handle that.
+           */
+          .error(manageLoginError);
+        return loginPromise;
+      },
+      logoutUser: function () {
+        /**
+         * De-registers the userToken remotely
+         * then clears the loginService as it was on startup
+         */
+        $http.get('/logout'); // fire and forget
+        setToken(null);
+        wrappedService.userRole = userRoles.public;
+        wrappedService.userObject = {};
+        $state.go(logoutState);
+
+        return wrappedService.userObject;
+      },
+      resolvePendingState: function () {
+        var checkUser = $q.defer(),
+            loginPromise,
+            finalPromise,
+            pendingState = wrappedService.pendingStateChange;
+
+        loginPromise = $http.get('/user');
+        // When the $http is done, we register the http result into setPermissions, `data` parameter goes into loginService.setPermissions
+        loginPromise.success(wrappedService.setPermissions);
+        loginPromise.error(function () {
+          checkUser.reject('tokenexpired');
+        });
+
+        /**
+         * Define another check after the $http is done, this will *Actually* check if current user can access the requested $state
+         */
+        finalPromise = $q.all([loginPromise, checkUser.promise]);
+
+        loginPromise.then(function (result) {
+          // duplicated logic from loginService $stateChangeStart, slightly different, now we *MUST* have the userRole informations.
+          if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
+            checkUser.resolve();
+          } else {
+            checkUser.reject('unauthorized');
+          }
+        });
+        wrappedService.pendingStateChange = null;
+        return finalPromise;
+      },
+      /**
+       * Public properties
+       */
+      userRole: null,
+      pendingStateChange: null,
+      userObject: {}
+    };
+
+    getLoginData();
+    managePermissions();
+
+    return wrappedService;
+  };
+});

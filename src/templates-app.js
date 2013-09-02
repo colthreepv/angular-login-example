@@ -17,6 +17,8 @@ angular.module("home/home.tpl.html", []).run(["$templateCache", function($templa
     "<div class=\"jumbotron\">\n" +
     "  <h1>This is home!</h1>\n" +
     "  <p>Everybody can access this page, for the following pages use:</p>\n" +
+    "  <p class=\"text-info\">username: johnm, password: hello, permission: user</p>\n" +
+    "  <p class=\"text-danger\">username: sandrab, password: world, permission: admin</p>\n" +
     "</div>\n" +
     "");
 }]);

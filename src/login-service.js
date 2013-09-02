@@ -89,9 +89,6 @@ angular.module('loginService', [])
           $state.go(errorState, { error: error }, { location: false, inherit: false });
           return wrappedService.logoutUser();
         }
-        if (error === 'unauthorized') {
-          return $state.go(errorState, { error: error }, { location: false, inherit: false });
-        }
         /**
          * Generic redirect handling.
          * If a state transition has been prevented and it's not one of the 2 above errors, means it's a
@@ -99,11 +96,10 @@ angular.module('loginService', [])
          *
          * redirectMap should be defined in the $state(s) that can generate transition errors.
          */
-        if (angular.isDefined(to.redirectMap[error])) {
-          $state.go(to.redirectMap[error], { error: error });
-        } else {
-          throw new Error('redirectMap should be defined in the $state(s) that can generate transition errors');
+        if (angular.isDefined(to.redirectMap) && angular.isDefined(to.redirectMap[error])) {
+          return $state.go(to.redirectMap[error], { error: error });
         }
+        return $state.go(errorState, { error: error }, { location: false, inherit: false });
       });
     };
 

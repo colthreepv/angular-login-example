@@ -5,7 +5,7 @@ angular.module('angular-login.grandfather', ['ui.router', 'templates-app'])
       abstract: true,
       template: '<ui-view></ui-view>',
       resolve: {
-        'login': function (loginService, $http, $q, $state) {
+        'login': function (loginService, $q) {
           var roleDefined = $q.defer();
 
           /**

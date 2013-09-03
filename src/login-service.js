@@ -103,87 +103,69 @@ angular.module('loginService', [])
       });
     };
 
-    var manageLoginError = function (data, status, headers, config) {
-      // custom logic here.
-    };
-
     /**
      * High level, public methods
      */
 
     var wrappedService = {
-      /**
-       * Custom logic to manually set accessMask goes here
-       *
-       * Commented example shows an userObj coming with a 'completed'
-       * property defining if the user has completed his registration process,
-       * validating his/her email or not.
-       */
-      // if (userObj.completed) {
-      //   userObj.accessLevel = accessLevels.completed;
-      // } else {
-      //   userObj.accessMask = accessLevels.noncompleted;
-      //   $state.go('complete.registration');
-      // }
-      setPermissions: function (userObject) {
+      loginHandler: function (user, status, headers, config) {
+        /**
+         * Custom logic to manually set userRole goes here
+         *
+         * Commented example shows an userObj coming with a 'completed'
+         * property defining if the user has completed his registration process,
+         * validating his/her email or not.
+         *
+         * EXAMPLE:
+         * if (user.hasValidatedEmail) {
+         *   wrappedService.userRole = userRoles.registered;
+         * } else {
+         *   wrappedService.userRole = userRoles.invalidEmail;
+         *   $state.go('app.nagscreen');
+         * }
+         */
         // setup token
-        setToken(userObject.token);
-        // update userObject
-        angular.extend(wrappedService.userObject, userObject);
+        setToken(user.token);
+        // update user
+        angular.extend(wrappedService.user, user);
+        // flag true on isLogged
+        wrappedService.isLogged = true;
         // update userRole
-        wrappedService.userRole = userObject.userRole;
-        return userObject;
+        wrappedService.userRole = user.userRole;
+        return user;
       },
-      loginUser: function (postObj) {
-        var loginPromise = $http.post('/login', postObj)
-          .success(this.setPermissions)
-          /**
-           * manageLoginError is a function to manage partial login states
-           * Example:
-           * user1 registers with email user1@fakedomain.not.exists
-           * user1.userRole = userRoles.noncomplete
-           * After it validates the email:
-           * user1.userRole = userRoles.complete
-           *
-           * /login *might* return a 4xx Error code in case it cannot login
-           * until the email is not validated.
-           * manageLoginError will handle that.
-           */
-          .error(manageLoginError);
-        return loginPromise;
+      loginUser: function (httpPromise) {
+        httpPromise.success(wrappedService.loginHandler);
       },
-      logoutUser: function () {
+      logoutUser: function (httpPromise) {
         /**
          * De-registers the userToken remotely
          * then clears the loginService as it was on startup
          */
-        $http.get('/logout'); // fire and forget
         setToken(null);
         wrappedService.userRole = userRoles.public;
-        wrappedService.userObject = {};
+        wrappedService.user = {};
+        wrappedService.isLogged = false;
         $state.go(logoutState);
-
-        return wrappedService.userObject;
       },
-      resolvePendingState: function () {
+      resolvePendingState: function (httpPromise) {
         var checkUser = $q.defer(),
-            loginPromise,
             finalPromise,
             pendingState = wrappedService.pendingStateChange;
 
-        loginPromise = $http.get('/user');
-        // When the $http is done, we register the http result into setPermissions, `data` parameter goes into loginService.setPermissions
-        loginPromise.success(wrappedService.setPermissions);
-        loginPromise.error(function () {
+        // When the $http is done, we register the http result into loginHandler, `data` parameter goes into loginService.loginHandler
+        httpPromise.success(wrappedService.loginHandler);
+        httpPromise.error(function () {
           checkUser.reject('tokenexpired');
         });
 
         /**
          * Define another check after the $http is done, this will *Actually* check if current user can access the requested $state
          */
-        finalPromise = $q.all([loginPromise, checkUser.promise]);
+        finalPromise = $q.all([httpPromise, checkUser.promise]);
 
-        loginPromise.then(function (result) {
+        httpPromise.then(function (result) {
+          wrappedService.isLogged = true;
           // duplicated logic from loginService $stateChangeStart, slightly different, now we *MUST* have the userRole informations.
           if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
             checkUser.resolve();
@@ -198,8 +180,9 @@ angular.module('loginService', [])
        * Public properties
        */
       userRole: null,
-      pendingStateChange: null,
-      userObject: {}
+      user: {},
+      isLogged: false,
+      pendingStateChange: null
     };
 
     getLoginData();

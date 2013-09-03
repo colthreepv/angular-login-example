@@ -6,6 +6,7 @@ angular.module("error/error.tpl.html", []).run(["$templateCache", function($temp
     "  <h1>Error</h1>\n" +
     "  <div ng-switch=\"$stateParams.error\">\n" +
     "    <p class=\"text-danger\" ng-switch-when=\"unauthorized\">You are not authorized</p>\n" +
+    "    <p class=\"text-danger\" ng-switch-when=\"401\">You are not authorized</p>\n" +
     "    <p class=\"text-danger\" ng-switch-default>Some error has occurred</p>\n" +
     "  </div ng-switch>\n" +
     "</div>\n" +

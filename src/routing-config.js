@@ -58,15 +58,17 @@
    */
   function buildAccessLevels(accessLevelDeclarations, userRoles) {
 
-    var accessLevels = {};
+    var accessLevels = {},
+        resultBitMask,
+        role;
     for (var level in accessLevelDeclarations) {
 
       if (typeof accessLevelDeclarations[level] === 'string') {
         if (accessLevelDeclarations[level] === '*') {
 
-          var resultBitMask = '';
+          resultBitMask = '';
 
-          for (var role in userRoles) {
+          for (role in userRoles) {
             resultBitMask += "1";
           }
           //accessLevels[level] = parseInt(resultBitMask, 2);
@@ -81,8 +83,8 @@
       }
       else {
 
-        var resultBitMask = 0;
-        for (var role in accessLevelDeclarations[level]) {
+        resultBitMask = 0;
+        for (role in accessLevelDeclarations[level]) {
           if (userRoles.hasOwnProperty(accessLevelDeclarations[level][role])) {
             resultBitMask = resultBitMask | userRoles[accessLevelDeclarations[level][role]].bitMask;
           }

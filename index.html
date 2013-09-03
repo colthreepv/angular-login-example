@@ -15,7 +15,7 @@
     <script type="text/javascript" src="libs/angular-ui-router.js"></script>
 
     <!-- roles config -->
-    <script type="text/javascript" src="src/routingConfig.js"></script>
+    <script type="text/javascript" src="src/routing-config.js"></script>
 
     <!-- templates compiled into js -->
     <script type="text/javascript" src="src/templates-app.js"></script>
@@ -42,18 +42,18 @@
               <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
             </li>
           </ul>
-          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(loginForm)" ng-hide="userObject.name">
+          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(login)" ng-hide="ls.isLogged">
             <div class="form-group">
-              <input type="text" class="form-control" ng-model="username" name="username" placeholder="Username">
+              <input type="text" class="form-control" ng-model="login.username" name="username" placeholder="Username">
             </div>
             <div class="form-group">
-              <input type="password" class="form-control" ng-model="password" name="password" placeholder="Password">
+              <input type="password" class="form-control" ng-model="login.password" name="password" placeholder="Password">
             </div>
             <button type="submit" class="btn btn-default">Login</button>
           </form>
-          <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="userObject.name">
+          <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
             <div class="form-group">
-              <label>Hello {{ userObject.name }}</label>
+              <label>Hello {{ ls.user.name }}</label>
             </div>
             <div class="form-group">
               <button  type="submit" class="btn btn-default">Logout</button>
@@ -65,13 +65,4 @@
       <ui-view></ui-view>
     </div>
   </body>
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-42785441-2', 'mrgamer.github.io');
-    ga('send', 'pageview');
-  </script>
 </html>

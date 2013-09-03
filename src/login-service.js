@@ -85,10 +85,10 @@ angular.module('loginService', [])
         // in case the promise given to resolve function is an $http request
         // the error is a object containing the error and additional informations
         error = (typeof error === 'object') ? error.status.toString() : error;
-        // there must be a tokenexpired error.
-        if (error === 'tokenexpired') {
-          $state.go(errorState, { error: error }, { location: false, inherit: false });
-          return wrappedService.logoutUser();
+        // in case of a 'tokenexpired', or a random 5xx status code from server, user gets loggedout
+        if (error === 'tokenexpired' || /5\d{2}/.test(error)) {
+          wrappedService.logoutUser();
+          return $state.go(errorState, { error: error }, { location: false, inherit: false });
         }
         /**
          * Generic redirect handling.

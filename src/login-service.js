@@ -31,6 +31,7 @@ angular.module('loginService', [])
         setHeaders(userToken);
       } else {
         wrappedService.userRole = userRoles.public;
+        wrappedService.isLogged = false;
       }
     };
 
@@ -181,7 +182,7 @@ angular.module('loginService', [])
        */
       userRole: null,
       user: {},
-      isLogged: false,
+      isLogged: null,
       pendingStateChange: null
     };
 

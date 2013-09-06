@@ -81,7 +81,7 @@ angular.module('loginService', [])
          * You can use the value of redirectMap, based on the value of the rejection
          * So you can setup DIFFERENT redirections based on different promise errors.
          */
-        var errorObj;
+        var errorObj, redirectObj;
         // in case the promise given to resolve function is an $http request
         // the error is a object containing the error and additional informations
         error = (typeof error === 'object') ? error.status.toString() : error;
@@ -98,7 +98,12 @@ angular.module('loginService', [])
          * redirectMap should be defined in the $state(s) that can generate transition errors.
          */
         if (angular.isDefined(to.redirectMap) && angular.isDefined(to.redirectMap[error])) {
-          return $state.go(to.redirectMap[error], { error: error });
+          if (typeof to.redirectMap[error] === 'string') {
+            return $state.go(to.redirectMap[error], { error: error });
+          } else if (typeof to.redirectMap[error] === 'object') {
+            redirectObj = to.redirectMap[error];
+            return $state.go(redirectObj.state, { error: redirectObj.prefix + error });
+          }
         }
         return $state.go(errorState, { error: error }, { location: false, inherit: false });
       });

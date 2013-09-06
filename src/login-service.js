@@ -31,6 +31,7 @@ angular.module('loginService', [])
         setHeaders(userToken);
       } else {
         wrappedService.userRole = userRoles.public;
+        wrappedService.isLogged = false;
       }
     };
 
@@ -80,14 +81,14 @@ angular.module('loginService', [])
          * You can use the value of redirectMap, based on the value of the rejection
          * So you can setup DIFFERENT redirections based on different promise errors.
          */
-        var errorObj;
+        var errorObj, redirectObj;
         // in case the promise given to resolve function is an $http request
         // the error is a object containing the error and additional informations
         error = (typeof error === 'object') ? error.status.toString() : error;
-        // there must be a tokenexpired error.
+        // in case of a 'tokenexpired', or a random 5xx status code from server, user gets loggedout
         if (error === 'tokenexpired') {
-          $state.go(errorState, { error: error }, { location: false, inherit: false });
-          return wrappedService.logoutUser();
+          wrappedService.logoutUser();
+          return $state.go(errorState, { error: error }, { location: false, inherit: false });
         }
         /**
          * Generic redirect handling.
@@ -97,7 +98,12 @@ angular.module('loginService', [])
          * redirectMap should be defined in the $state(s) that can generate transition errors.
          */
         if (angular.isDefined(to.redirectMap) && angular.isDefined(to.redirectMap[error])) {
-          return $state.go(to.redirectMap[error], { error: error });
+          if (typeof to.redirectMap[error] === 'string') {
+            return $state.go(to.redirectMap[error], { error: error });
+          } else if (typeof to.redirectMap[error] === 'object') {
+            redirectObj = to.redirectMap[error];
+            return $state.go(redirectObj.state, { error: redirectObj.prefix + error });
+          }
         }
         return $state.go(errorState, { error: error }, { location: false, inherit: false });
       });
@@ -150,19 +156,16 @@ angular.module('loginService', [])
       },
       resolvePendingState: function (httpPromise) {
         var checkUser = $q.defer(),
-            finalPromise,
             pendingState = wrappedService.pendingStateChange;
 
         // When the $http is done, we register the http result into loginHandler, `data` parameter goes into loginService.loginHandler
         httpPromise.success(wrappedService.loginHandler);
+        httpPromise.success(function (data, status, headers, config) {
+          checkUser.resolve();
+        });
         httpPromise.error(function () {
           checkUser.reject('tokenexpired');
         });
-
-        /**
-         * Define another check after the $http is done, this will *Actually* check if current user can access the requested $state
-         */
-        finalPromise = $q.all([httpPromise, checkUser.promise]);
 
         httpPromise.then(function (result) {
           wrappedService.isLogged = true;
@@ -174,14 +177,14 @@ angular.module('loginService', [])
           }
         });
         wrappedService.pendingStateChange = null;
-        return finalPromise;
+        return checkUser.promise;
       },
       /**
        * Public properties
        */
       userRole: null,
       user: {},
-      isLogged: false,
+      isLogged: null,
       pendingStateChange: null
     };
 

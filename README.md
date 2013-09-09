@@ -106,7 +106,7 @@ As personal taste, i haven't found it particularly elegant, so a more radical/di
 
 # Libraries used
 
-## angular.js 1.2.0rc1
+## angular.js 1.2.0-rc2
 You should know this one :-)
 In this release the dev team has put routing in a separate file because there are alternative projects like... 
 

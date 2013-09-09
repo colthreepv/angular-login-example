@@ -207,12 +207,27 @@ Boolean property indicating if the user is logged with an userRole different tha
 Boolean property indicating if the `loginService` is waiting for the grandfather's resolve to be completed, in order to check if the user _can_ or _cannot_ access the requested state.
 
 # Logic behind
-
-**TO BE DONE !!**
+While this demostration has some code behind, the user checking problem in a Single-Page Application is actually more a _logic_ problem (when to check permissions? how to get required informations?), instead of a coding-problem.
 
 ## grandfather, what's that?
+As you can see if you meddle with the code, the so-called _grandfather_ is an [_abstract_][angular-ui-router-abstractstate] state that is the father of all the states.  
+
+![diagram](https://docs.google.com/drawings/d/10-DoPgYlNInXxzmtHaGKfGFdYeNzJ4AWKvd1bYcmV8Y/pub?w=960&amp;h=720)
+
+The state logic in angular-ui-router is based off a N-ary state tree.  
+The root of this tree is the grandfather, being _abstract_ only means it gets executed but cannot be transitioned into, exactly what we need check permissions asynchronously.
+
 ## routing-config, what's that?
+In the app there is a file so called `routing-config.js` completely taken from [fnakstad project](https://github.com/fnakstad/angular-client-side-auth/blob/master/client/js/routingConfig.js).  
+I think it's a clever and handy bit-based security system.
+
 ## synchronous and asynchronous check
+In this demo you can see there is a double check on user permissions to transition to a state:
+
+The former is a synchronous check on all the `$stateChangeStart` events, this must be synchronous because events for their nature can only be prevented in a sync-way.
+But since we need it to do a server-side request the first **REAL** check is done after an http request.
+
+The latter is inside the [`resolvePendingstate`](#resolvependingstate) method, called from the grandfather state in this example, just after it obtained the valid user informations to let the user access a state or not.
 
 # How to generate correct errors
 
@@ -354,3 +369,4 @@ angular.module('myapp.funny', ['myapp.grandfather'])
   [how-to-declare-a-state]: #how-to-declare-a-state
 
   [angular-ui-router-urlprovider]: https://github.com/angular-ui/ui-router/wiki/URL-Routing#urlrouterprovider
+  [angular-ui-router-abstractstate]: https://github.com/angular-ui/ui-router/wiki/Nested-States-%26-Nested-Views#abstract-states

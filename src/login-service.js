@@ -32,6 +32,7 @@ angular.module('loginService', [])
       } else {
         wrappedService.userRole = userRoles.public;
         wrappedService.isLogged = false;
+        wrappedService.doneLoading = true;
       }
     };
 
@@ -49,6 +50,7 @@ angular.module('loginService', [])
          * Grandfather.resolve will either let the user in or reject the promise later!
          */
         if (wrappedService.userRole === null) {
+          wrappedService.doneLoading = false;
           wrappedService.pendingStateChange = {
             to: to,
             toParams: toParams
@@ -56,12 +58,11 @@ angular.module('loginService', [])
           return;
         }
 
-
         // if the state has undefined accessLevel, anyone can access it.
         // NOTE: if `wrappedService.userRole === undefined` means the service still doesn't know the user role,
         // we need to rely on grandfather resolve, so we let the stateChange success, for now.
         if (to.accessLevel === undefined || to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
-          console.log('you are allowed on this page:', to.name);
+          angular.noop(); // requested state can be transitioned to.
         } else {
           event.preventDefault();
           // test this
@@ -156,10 +157,11 @@ angular.module('loginService', [])
       },
       resolvePendingState: function (httpPromise) {
         var checkUser = $q.defer(),
-            pendingState = wrappedService.pendingStateChange;
+            self = this,
+            pendingState = self.pendingStateChange;
 
         // When the $http is done, we register the http result into loginHandler, `data` parameter goes into loginService.loginHandler
-        httpPromise.success(wrappedService.loginHandler);
+        httpPromise.success(self.loginHandler);
         httpPromise.success(function (data, status, headers, config) {
           checkUser.resolve();
         });
@@ -168,7 +170,8 @@ angular.module('loginService', [])
         });
 
         httpPromise.then(function (result) {
-          wrappedService.isLogged = true;
+          self.isLogged = true;
+          self.doneLoading = true;
           // duplicated logic from loginService $stateChangeStart, slightly different, now we *MUST* have the userRole informations.
           if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
             checkUser.resolve();
@@ -176,7 +179,11 @@ angular.module('loginService', [])
             checkUser.reject('unauthorized');
           }
         });
-        wrappedService.pendingStateChange = null;
+        /**
+         * I setted up the state change inside the promises success/error,
+         * so i can safely assign pendingStateChange back to null.
+         */
+        self.pendingStateChange = null;
         return checkUser.promise;
       },
       /**
@@ -185,7 +192,8 @@ angular.module('loginService', [])
       userRole: null,
       user: {},
       isLogged: null,
-      pendingStateChange: null
+      pendingStateChange: null,
+      doneLoading: null
     };
 
     getLoginData();

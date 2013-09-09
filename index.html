@@ -4,8 +4,11 @@
     <title>angular-login-service</title>
 
     <!-- BootstrapCDN -->
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet"> -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- CSS, seems a must! -->
+    <link href="style.css" rel="stylesheet">
 
     <!-- Libraries required -->
     <script type="text/javascript" src="libs/angular.js"></script>
@@ -34,6 +37,7 @@
     <div class="container">
       <nav class="navbar navbar-default" role="navigation">
         <div class="collapse navbar-collapse">
+          <!-- Navbar links -->
           <ul class="nav navbar-nav">
             <li ng-class="{ active: $state.is('app.home') }">
               <a href="" ng-click="$state.go('app.home')">Home</a>
@@ -42,27 +46,37 @@
               <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
             </li>
           </ul>
-          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe(login)" ng-hide="ls.isLogged">
+          <!-- Right side of the navbar -->
+          <!-- Login Form -->
+          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe()" ng-hide="ls.isLogged || !ls.doneLoading">
             <div class="form-group">
               <input type="text" class="form-control" ng-model="login.username" name="username" placeholder="Username">
             </div>
             <div class="form-group">
               <input type="password" class="form-control" ng-model="login.password" name="password" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-default">Login</button>
+            <button type="submit" class="btn btn-default" ng-disabled="login.working">Login <i class="icon-signin"></i></button>
           </form>
+          <!-- Spinner -->
+          <button class="btn btn-default navbar-btn navbar-right" ng-hide="ls.doneLoading">
+            <i class="icon-spinner icon-spin"></i>
+          </button>
+          <!-- Logout Form -->
           <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
             <div class="form-group">
               <label>Hello {{ ls.user.name }}</label>
             </div>
             <div class="form-group">
-              <button  type="submit" class="btn btn-default">Logout</button>
+              <button  type="submit" class="btn btn-default">Logout <i class="icon-signout"></i></button>
             </div>
           </form>
           </ul>
         </div>
       </nav>
-      <ui-view></ui-view>
+      <ui-view ng-hide="doingResolve"></ui-view>
+      <div class="jumbotron loading-jumbo" ng-show="doingResolve">
+        <h1><i class="icon-refresh icon-2x icon-spin"></i> Loading</h1>
+      </div>
     </div>
   </body>
 </html>

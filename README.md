@@ -10,10 +10,7 @@ Stand-alone project showing how to make a robust angular application serving acc
   * [What this is example for](#what-is-this-example-for)
     * [but there are other...?](#but-there-are-other)
     * [Token Revocation](#token-revocation)
-  * Roadmap to 0.0.1
-    * cleanup code
-    * spinner support
-  * Roadmap to 0.1.0 first release
+  * Roadmap to 0.2.0
     * Register new users
     * ngmin and minify
     * more than one README.md, if needed.
@@ -47,6 +44,7 @@ Stand-alone project showing how to make a robust angular application serving acc
       * [user](#user)
       * [isLogged](#islogged)
       * [pendingStateChange](#pendingstatechange)
+      * [doneLoading](#doneloading)
   * [Logic behind](#logic-behind)
     * [grandfather, what's that?](#grandfather-whats-that)
     * [routingConfig, what's that?](#routing-config-whats-that)
@@ -205,6 +203,14 @@ Boolean property indicating if the user is logged with an userRole different tha
 
 ### pendingStateChange
 Boolean property indicating if the `loginService` is waiting for the grandfather's resolve to be completed, in order to check if the user _can_ or _cannot_ access the requested state.
+
+### doneLoading
+Boolean property, might have 3 states: `null`, `false`, `true`.  
+`null`: loginService hasn't done it's work yet.  
+`false`: loginService is waiting for some `$http` promise to get completed  
+`true`: loginService got answer from `$http` so the values must be considered **final**.  
+
+Should be handy for displaying loading spinners, as done on this example.
 
 # Logic behind
 While this demostration has some code behind, the user checking problem in a Single-Page Application is actually more a _logic_ problem (when to check permissions? how to get required informations?), instead of a coding-problem.

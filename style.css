@@ -1,0 +1,7 @@
+.container {
+  -webkit-backface-visibility: hidden;
+}
+.loading-jumbo {
+  text-align: center;
+  cursor: progress;
+}

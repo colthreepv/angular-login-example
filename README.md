@@ -112,7 +112,7 @@ In this release the dev team has put routing in a separate file because there ar
 
 ## angular-ui-router
 This is the star here!
-After messing my life using libraries like [backbone-layoutmanager][backbone-layoutmanager], i can say this is a far more thinked solution, incredibly stable, and elegant solution to be only at version 0.0.2!
+After messing my life using libraries like [backbone-layoutmanager][backbone-layoutmanager], i can say this is a far more thinked solution, incredibly stable, and elegant solution to be only at version 0.2.0!
 
 ## angular-mocks
 This part of AngularJS kit is made mainly for testing purposes, on this demo is used to simulate a backend server with 700ms response time.

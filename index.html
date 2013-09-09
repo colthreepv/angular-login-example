@@ -48,7 +48,7 @@
           </ul>
           <!-- Right side of the navbar -->
           <!-- Login Form -->
-          <form class="navbar-form navbar-right" name="loginForm" role="login" ng-submit="loginMe()" ng-hide="ls.isLogged || !ls.doneLoading">
+          <form class="navbar-form navbar-right animation-in" name="loginForm" role="login" ng-submit="loginMe()" ng-hide="ls.isLogged || !ls.doneLoading">
             <div class="form-group">
               <input type="text" class="form-control" ng-model="login.username" name="username" placeholder="Username">
             </div>
@@ -62,7 +62,7 @@
             <i class="icon-spinner icon-spin"></i>
           </button>
           <!-- Logout Form -->
-          <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
+          <form class="navbar-form navbar-right animation-in" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
             <div class="form-group">
               <label>Hello {{ ls.user.name }}</label>
             </div>

@@ -5,3 +5,17 @@
   text-align: center;
   cursor: progress;
 }
+
+.animation-in.ng-hide-remove {
+  -webkit-transition:0.25s linear all;
+  -moz-transition:0.25s linear all;
+  -o-transition:0.25s linear all;
+  transition:0.25s linear all;
+  display:block!important;
+}
+.animation-in.ng-hide-remove {
+  opacity:0;
+}
+.animation-in.ng-hide-remove.ng-hide-remove-active {
+  opacity:1;
+}

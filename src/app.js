@@ -1,4 +1,6 @@
 angular.module('angular-login', [
+  // ngAnimate
+  'ngAnimate',
   // login service
   'loginService',
   'angular-login.mock',

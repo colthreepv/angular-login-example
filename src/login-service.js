@@ -142,7 +142,7 @@ angular.module('loginService', [])
         return user;
       },
       loginUser: function (httpPromise) {
-        httpPromise.success(wrappedService.loginHandler);
+        httpPromise.success(this.loginHandler);
       },
       logoutUser: function (httpPromise) {
         /**
@@ -150,9 +150,9 @@ angular.module('loginService', [])
          * then clears the loginService as it was on startup
          */
         setToken(null);
-        wrappedService.userRole = userRoles.public;
-        wrappedService.user = {};
-        wrappedService.isLogged = false;
+        this.userRole = userRoles.public;
+        this.user = {};
+        this.isLogged = false;
         $state.go(logoutState);
       },
       resolvePendingState: function (httpPromise) {

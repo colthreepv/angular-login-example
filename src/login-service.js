@@ -100,10 +100,10 @@ angular.module('loginService', [])
          */
         if (angular.isDefined(to.redirectMap) && angular.isDefined(to.redirectMap[error])) {
           if (typeof to.redirectMap[error] === 'string') {
-            return $state.go(to.redirectMap[error], { error: error });
+            return $state.go(to.redirectMap[error], { error: error }, { location: false, inherit: false });
           } else if (typeof to.redirectMap[error] === 'object') {
             redirectObj = to.redirectMap[error];
-            return $state.go(redirectObj.state, { error: redirectObj.prefix + error });
+            return $state.go(redirectObj.state, { error: redirectObj.prefix + error }, { location: false, inherit: false });
           }
         }
         return $state.go(errorState, { error: error }, { location: false, inherit: false });

@@ -162,23 +162,21 @@ angular.module('loginService', [])
 
         // When the $http is done, we register the http result into loginHandler, `data` parameter goes into loginService.loginHandler
         httpPromise.success(self.loginHandler);
-        httpPromise.success(function (data, status, headers, config) {
-          checkUser.resolve();
-        });
-        httpPromise.error(function (data, status, headers, config) {
-          checkUser.reject(status.toString());
-        });
 
-        httpPromise.then(function (result) {
-          self.isLogged = true;
-          self.doneLoading = true;
-          // duplicated logic from loginService $stateChangeStart, slightly different, now we *MUST* have the userRole informations.
-          if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & wrappedService.userRole.bitMask) {
-            checkUser.resolve();
-          } else {
-            checkUser.reject('unauthorized');
+        httpPromise.then(
+          function success(result) {
+            self.doneLoading = true;
+            // duplicated logic from $stateChangeStart, slightly different, now we surely have the userRole informations.
+            if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & self.userRole.bitMask) {
+              checkUser.resolve();
+            } else {
+              checkUser.reject('unauthorized');
+            }
+          },
+          function reject(data, status, headers, config) {
+            checkUser.reject(status.toString());
           }
-        });
+        );
         /**
          * I setted up the state change inside the promises success/error,
          * so i can safely assign pendingStateChange back to null.

@@ -10,7 +10,7 @@ angular.module('angular-login', [
 .config(function ($urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
 })
-.run(function ($rootScope) {
+.run(function ($rootScope, $window, $location) {
   /**
    * $rootScope.doingResolve is a flag useful to display a spinner on changing states.
    * Some states may require remote data so it will take awhile to load.
@@ -21,6 +21,10 @@ angular.module('angular-login', [
   });
   $rootScope.$on('$stateChangeSuccess', function () {
     $rootScope.doingResolve = false;
+  });
+  // google analitics
+  $rootScope.$on('$stateChangeSuccess', function () {
+    $window._gaq.push(['_trackPageview', $location.path()]);
   });
 })
 .controller('BodyController', function ($scope, $state, $stateParams, loginService, $http) {

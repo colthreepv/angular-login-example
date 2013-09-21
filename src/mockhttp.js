@@ -7,7 +7,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
           _arguments = arguments;
         setTimeout(function () {
           callback.apply(_this, _arguments);
-        }, 700);
+        }, (Math.random() * 1000) + 700);
       };
       return $delegate.call(this, method, url, data, interceptor, headers);
     };

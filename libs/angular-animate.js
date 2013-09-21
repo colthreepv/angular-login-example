@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.0-427ee93
+ * @license AngularJS v1.2.0-rc.2
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -208,9 +208,9 @@ angular.module('ngAnimate', ['ng'])
 
     var NG_ANIMATE_STATE = '$$ngAnimateState';
     var rootAnimateState = {running:true};
-    $provide.decorator('$animate', ['$delegate', '$injector', '$sniffer', '$rootElement', '$timeout',
-                            function($delegate,   $injector,   $sniffer,   $rootElement,   $timeout) {
-
+    $provide.decorator('$animate', ['$delegate', '$injector', '$sniffer', '$rootElement', '$timeout', '$rootScope',
+                            function($delegate,   $injector,   $sniffer,   $rootElement,   $timeout,   $rootScope) {
+        
       $rootElement.data(NG_ANIMATE_STATE, rootAnimateState);
 
       function lookup(name) {
@@ -289,8 +289,10 @@ angular.module('ngAnimate', ['ng'])
         */
         enter : function(element, parent, after, done) {
           $delegate.enter(element, parent, after);
-          performAnimation('enter', 'ng-enter', element, parent, after, function() {
-            $timeout(done || noop, 0, false);
+          $rootScope.$$postDigest(function() {
+            performAnimation('enter', 'ng-enter', element, parent, after, function() {
+              done && $timeout(done, 0, false);
+            });
           });
         },
 
@@ -322,8 +324,10 @@ angular.module('ngAnimate', ['ng'])
          * @param {function()=} done callback function that will be called once the animation is complete
         */
         leave : function(element, done) {
-          performAnimation('leave', 'ng-leave', element, null, null, function() {
-            $delegate.leave(element, done);
+          $rootScope.$$postDigest(function() {
+            performAnimation('leave', 'ng-leave', element, null, null, function() {
+              $delegate.leave(element, done);
+            });
           });
         },
 
@@ -359,8 +363,10 @@ angular.module('ngAnimate', ['ng'])
         */
         move : function(element, parent, after, done) {
           $delegate.move(element, parent, after);
-          performAnimation('move', 'ng-move', element, null, null, function() {
-            $timeout(done || noop, 0, false);
+          $rootScope.$$postDigest(function() {
+            performAnimation('move', 'ng-move', element, null, null, function() {
+              done && $timeout(done, 0, false);
+            });
           });
         },
 
@@ -557,6 +563,7 @@ angular.module('ngAnimate', ['ng'])
 
       var durationKey = 'Duration',
           delayKey = 'Delay',
+          propertyKey = 'Property',
           animationIterationCountKey = 'IterationCount',
           ELEMENT_NODE = 1;
 
@@ -617,15 +624,25 @@ angular.module('ngAnimate', ['ng'])
            timeout is empty (this would cause a flicker bug normally
            in the page */
         if(duration > 0) {
+          var node = element[0];
+
+          //temporarily disable the transition so that the enter styles
+          //don't animate twice (this is here to avoid a bug in Chrome/FF).
+          node.style[w3cTransitionProp + propertyKey] = 'none';
+          node.style[vendorTransitionProp + propertyKey] = 'none';
+
           var activeClassName = '';
           forEach(className.split(' '), function(klass, i) {
             activeClassName += (i > 0 ? ' ' : '') + klass + '-active';
           });
 
-          $timeout(function() {
-            element.addClass(activeClassName);
-            $timeout(done, duration * 1000, false);
-          },0,false);
+          //this triggers a reflow which allows for the transition animation to kick in
+          element.prop('clientWidth');
+          node.style[w3cTransitionProp + propertyKey] = '';
+          node.style[vendorTransitionProp + propertyKey] = '';
+          element.addClass(activeClassName);
+
+          $timeout(done, duration * 1000, false);
 
           //this will automatically be called by $animate so
           //there is no need to attach this internally to the

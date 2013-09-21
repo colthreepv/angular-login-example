@@ -3,8 +3,6 @@ angular-login-example
 
 Stand-alone project showing how to make a robust angular application serving access permissions from Server.
 
-**Documentation is currently TBD**, patience is a must-have.
-
 # Table of Contents
 
   * [What this is example for](#what-is-this-example-for)
@@ -18,7 +16,7 @@ Stand-alone project showing how to make a robust angular application serving acc
     * fake email register and activation
     * more user levels
   * [Libraries Used](#libraries-used)
-    * [angular.js 1.2.0rc1](#angularjs-120rc1)
+    * [angular.js 1.2.0-rc2](#angularjs-120-rc2)
     * [angular-ui-router](#angular-ui-router)
     * [angular-mocks](#angular-mocks)
   * [loginService](#loginservice)
@@ -49,6 +47,7 @@ Stand-alone project showing how to make a robust angular application serving acc
     * [grandfather, what's that?](#grandfather-whats-that)
     * [routingConfig, what's that?](#routing-config-whats-that)
     * [synchronous and asynchronous check](#synchronous-and-asynchronous-check)
+    * [call schema](#call-schema)
   * [How to generate correct errors](#how-to-generate-correct-errors)
     * [`resolve` errors](#resolve-errors)
     * [`$http` errors](#http-errors)
@@ -164,7 +163,7 @@ Synchronous check on permissions, if the service _already_ has the informations 
 Handles spinner appearance.  
 
 #### $stateChangeSuccess
-**TO BE DONE** Handles spinner disappear.
+Handles spinner disappear.
 
 #### $stateChangeError
 Manages error redirection in case of any `resolve` fails, even the [grandfather][grandfather] one.
@@ -234,6 +233,12 @@ The former is a synchronous check on all the `$stateChangeStart` events, this mu
 But since we need it to do a server-side request the first **REAL** check is done after an http request.
 
 The latter is inside the [`resolvePendingstate`](#resolvependingstate) method, called from the grandfather state in this example, just after it obtained the valid user informations to let the user access a state or not.
+
+## call schema
+Here's a brief call schema of the app and the service, and how they interact with the user request.  
+Bare in mind this is for the user to get a general idea, the real amount of calls might be higher (or slightly different).  
+
+![call schema](https://www.lucidchart.com/publicSegments/view/523d9c78-8e7c-4663-9f73-1c850a00808f/image.png)
 
 # How to generate correct errors
 

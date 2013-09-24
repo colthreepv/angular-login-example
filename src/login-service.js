@@ -164,7 +164,7 @@ angular.module('loginService', [])
         httpPromise.success(self.loginHandler);
 
         httpPromise.then(
-          function success(result) {
+          function success(httpObj) {
             self.doneLoading = true;
             // duplicated logic from $stateChangeStart, slightly different, now we surely have the userRole informations.
             if (pendingState.to.accessLevel === undefined || pendingState.to.accessLevel.bitMask & self.userRole.bitMask) {
@@ -173,8 +173,8 @@ angular.module('loginService', [])
               checkUser.reject('unauthorized');
             }
           },
-          function reject(data, status, headers, config) {
-            checkUser.reject(status.toString());
+          function reject(httpObj) {
+            checkUser.reject(httpObj.status.toString());
           }
         );
         /**

@@ -40,10 +40,11 @@
           <!-- Navbar links -->
           <ul class="nav navbar-nav">
             <li ng-class="{ active: $state.is('app.home') }">
-              <a href="" ng-click="$state.go('app.home')">Home</a>
+              <a ui-sref="app.home">Home</a>
             </li>
             <li ng-class="{ active: $state.is('app.private') }">
-              <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
+              <a ui-sref="app.private">Admin-Only page</a>
+            </li>
             </li>
           </ul>
           <!-- Right side of the navbar -->

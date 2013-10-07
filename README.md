@@ -10,9 +10,8 @@ Stand-alone project showing how to make a robust angular application serving acc
     * [Token Revocation](#token-revocation)
   * Roadmap to 0.2.0
     * Register new users
-    * ngmin and minify
+    * ngmin and minify && build/ folder
     * more than one README.md, if needed.
-    * build/ folder
     * fake email register and activation
     * more user levels
   * [Libraries Used](#libraries-used)

@@ -18,6 +18,8 @@
   "devDependencies": {
     "connect": "latest",
     "grunt": "~0.4.1",
-    "grunt-html2js": "~0.1.7"
+    "grunt-html2js": "~0.1.7",
+    "grunt-contrib-less": "~0.7.0",
+    "grunt-contrib-watch": "~0.5.3"
   }
 }

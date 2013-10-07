@@ -5,6 +5,7 @@ angular.module('angular-login', [
   // different app sections
   'angular-login.home',
   'angular-login.private',
+  'angular-login.register',
   'angular-login.error'
 ])
 .config(function ($urlRouterProvider) {

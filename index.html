@@ -30,6 +30,7 @@
     <script type="text/javascript" src="src/login-service.js"></script>
     <script type="text/javascript" src="src/home/home.js"></script>
     <script type="text/javascript" src="src/private/private.js"></script>
+    <script type="text/javascript" src="src/register/register.js"></script>
     <script type="text/javascript" src="src/error/error.js"></script>
 
   </head>
@@ -45,6 +46,8 @@
             <li ng-class="{ active: $state.is('app.private') }">
               <a ui-sref="app.private">Admin-Only page</a>
             </li>
+            <li ng-class="{ active: $state.is('app.register') }">
+              <a ui-sref="app.register">Register <i class="icon-user"></i>+</a>
             </li>
           </ul>
           <!-- Right side of the navbar -->

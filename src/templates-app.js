@@ -1,4 +1,4 @@
-angular.module('templates-app', ['error/error.tpl.html', 'home/home.tpl.html', 'private/private.tpl.html']);
+angular.module('templates-app', ['error/error.tpl.html', 'home/home.tpl.html', 'private/private.tpl.html', 'register/register.tpl.html']);
 
 angular.module("error/error.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("error/error.tpl.html",
@@ -30,5 +30,16 @@ angular.module("private/private.tpl.html", []).run(["$templateCache", function($
     "  <h1 class=\"text-danger\">This is your private data!</h1>\n" +
     "  <p>The passwords of your Chrome browser are...</p>\n" +
     "</div>\n" +
+    "");
+}]);
+
+angular.module("register/register.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("register/register.tpl.html",
+    "<form class=\"form-signin\" name=\"registerForm\">\n" +
+    "  <h2 class=\"form-signin-heading\"><i class=\"icon-user\"></i> New User</h2>\n" +
+    "  <input type=\"text\" class=\"form-control\" placeholder=\"Username\" name=\"username\" ng-model=\"registerObj.username\" autofocus=\"\" ng-minlength=\"4\">\n" +
+    "  <input type=\"password\" class=\"form-control\" placeholder=\"Password\" name=\"password\" ng-model=\"registerObj.password\">\n" +
+    "  <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Register</button>\n" +
+    "</form>\n" +
     "");
 }]);

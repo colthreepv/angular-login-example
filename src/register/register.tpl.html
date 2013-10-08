@@ -1,6 +1,22 @@
-<form class="form-signin" name="registerForm">
+<form class="form-signin" name="registerForm" role="registration">
   <h2 class="form-signin-heading"><i class="icon-user"></i> New User</h2>
-  <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="" ng-minlength="4">
-  <input type="password" class="form-control" placeholder="Password" name="password" ng-model="registerObj.password">
+  <!--div class="form-group">
+    <label for="username" class="col-lg-2 control-label">Email</label>
+    <div class="col-lg-10">
+      <input type="text" class="form-control" id="username" placeholder="Username">
+    </div>
+  </div-->
+  <div class="form-input username">
+    <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="" ng-minlength="4" ng-maxlength="16" ng-required="true">
+    <div class="errors">
+      <div class="error active">
+        <p class="text-danger">Error: </p>
+        <p>Some bad error haz happened TO YOU SIR!!111</p>
+      </div>
+    </div>
+  </div>
+  <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
+  <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
+  <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">
   <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
 </form>

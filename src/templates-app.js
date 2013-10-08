@@ -35,10 +35,26 @@ angular.module("private/private.tpl.html", []).run(["$templateCache", function($
 
 angular.module("register/register.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("register/register.tpl.html",
-    "<form class=\"form-signin\" name=\"registerForm\">\n" +
+    "<form class=\"form-signin\" name=\"registerForm\" role=\"registration\">\n" +
     "  <h2 class=\"form-signin-heading\"><i class=\"icon-user\"></i> New User</h2>\n" +
-    "  <input type=\"text\" class=\"form-control\" placeholder=\"Username\" name=\"username\" ng-model=\"registerObj.username\" autofocus=\"\" ng-minlength=\"4\">\n" +
-    "  <input type=\"password\" class=\"form-control\" placeholder=\"Password\" name=\"password\" ng-model=\"registerObj.password\">\n" +
+    "  <!--div class=\"form-group\">\n" +
+    "    <label for=\"username\" class=\"col-lg-2 control-label\">Email</label>\n" +
+    "    <div class=\"col-lg-10\">\n" +
+    "      <input type=\"text\" class=\"form-control\" id=\"username\" placeholder=\"Username\">\n" +
+    "    </div>\n" +
+    "  </div-->\n" +
+    "  <div class=\"form-input username\">\n" +
+    "    <input type=\"text\" class=\"form-control\" placeholder=\"Username\" name=\"username\" ng-model=\"registerObj.username\" autofocus=\"\" ng-minlength=\"4\" ng-maxlength=\"16\" ng-required=\"true\">\n" +
+    "    <div class=\"errors\">\n" +
+    "      <div class=\"error active\">\n" +
+    "        <p class=\"text-danger\">Error: </p>\n" +
+    "        <p>Some bad error haz happened TO YOU SIR!!111</p>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <input type=\"password\" class=\"form-control password\" placeholder=\"Password\" name=\"password\" ng-model=\"registerObj.password\">\n" +
+    "  <input type=\"password\" class=\"form-control password2\" placeholder=\"Repeat Password\" name=\"password2\" ng-model=\"registerObj.password2\">\n" +
+    "  <input type=\"email\" class=\"form-control email\" placeholder=\"E-Mail\" name=\"email\" ng-model=\"registerObj.email\">\n" +
     "  <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Register</button>\n" +
     "</form>\n" +
     "");

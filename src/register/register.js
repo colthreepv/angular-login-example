@@ -11,7 +11,9 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
 .controller('RegisterController', function ($scope, $http) {
   $scope.registerObj = {
     username: null,
-    password: null
+    password: null,
+    password2: null,
+    email: null
   };
 
   $scope.submit = function () {

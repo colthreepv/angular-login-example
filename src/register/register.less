@@ -8,29 +8,53 @@
   .form-control:focus {
       z-index: 2;
   }
-  input[type="text"] {
-    margin-bottom: -1px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
   .form-control {
     position: relative;
     font-size: 16px;
     height: auto;
     padding: 10px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
   }
-  input[type="password"] {
+  input {
+    // margin-bottom: 10px;
+    &.password {
+      margin-bottom: -1px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &.password2 {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+  .form-input {
     margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    .errors {
+      background-color: #f7f7f9;
+      border: 1px solid #e1e1e8;
+      max-height: 60px; // 3 lines ?
+      .error {
+        margin: 3px 5px;
+        white-space: nowrap; // white-space div align
+        p {
+          display: inline-block;
+          white-space: normal; // reset it on children
+          margin: 0;
+          &:first-child {
+            width: 40px;
+            vertical-align: top;
+          }
+          &:last-child {
+            width: 248px;
+          }
+        }
+
+      }
+    }
+  }
+  .form-signin-heading, .checkbox {
+    margin-bottom: 10px;
   }
   .checkbox {
     font-weight: normal;
   }
-}
-.form-signin .form-signin-heading,.form-signin .checkbox {
-  margin-bottom: 10px;
 }

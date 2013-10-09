@@ -1,9 +1,15 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-git-describe');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
     html2js: {
       /**
        * These are the templates from `src/app`.
@@ -13,15 +19,25 @@ module.exports = function (grunt) {
           base: 'src'
         },
         src: ['src/**/*.tpl.html'],
-        dest: 'src/templates-app.js'
+        dest: 'build/templates-app.js'
       }
     },
     less: {
       all: {
         src: 'style.less',
-        dest: 'style.css',
+        dest: 'build/style.css',
         options: {
           report: 'gzip'
+        }
+      }
+    },
+    connect: {
+      serve: {
+        options: {
+          port: 8080,
+          base: 'build/',
+          hostname: '*',
+          debug: true
         }
       }
     },
@@ -36,11 +52,79 @@ module.exports = function (grunt) {
       less: {
         files: ['style.less', 'src/**/*.less'],
         tasks: ['less']
+      },
+      sources: {
+        files: ['src/**/*.js', 'src/*.js'],
+        tasks: ['concat:buildapp']
+      },
+      index: {
+        files: 'index.html',
+        tasks: ['copy:index']
+      }
+    },
+    'git-describe': {
+      all: {}
+    },
+    concat: {
+      buildapp: {
+        src: ['src/**/*.js', 'src/*.js'],
+        dest: 'build/app.js',
+        options: {
+          banner: '/*! <%=pkg.name %> v<%=grunt.option("gitRevision") %> | date: <%=grunt.template.today("dd-mm-yyyy") %> */\n'
+        }
+      },
+      buildlibs: {
+        src: [
+          'libs/angular.js',
+          'libs/angular-animate.js',
+          'libs/angular-mocks.js',
+          'libs/angular-ui-router.js',
+          'components/bootstrap-ui/src/collapse/collapse.js',
+          'components/bootstrap-ui/src/transition/transition.js'
+        ],
+        dest: 'build/libs.js'
+      },
+      togheter: {
+        src: ['build/*.js'],
+        dest: 'build/all.js'
+      }
+    },
+    copy: {
+      index: {
+        src: 'index.html',
+        dest: 'build/',
+        options: {
+          processContent: function (content, srcpath) {
+            // Compiling index.html file!
+            return grunt.template.process(content, {
+              gitRevision: grunt.option('gitRevision')
+            });
+          }
+        }
+      }
+    },
+    clean: {
+      all: {
+        src: ['build/']
       }
     }
   });
 
-  grunt.registerTask('templates', ['html2js']);
-  grunt.registerTask('build', ['templates', 'less']);
-  grunt.registerTask('default', 'watch');
+  grunt.registerTask('saveRevision', function () {
+    grunt.event.once('git-describe', function (rev) {
+      grunt.option('gitRevision', rev);
+    });
+    grunt.task.run('git-describe');
+  });
+
+  // Build process:
+  // - clean build/
+  // - creates build/templates-app.js from *.tpl.html files
+  // - creates build/style.css from all the .less files
+  // - get git revision in local grunt memory
+  // - concatenates all the source files in build/app.js - banner with git revision
+  // - concatenates all the libraries in build/libs.js
+  // - copies index.html over build/
+  grunt.registerTask('build', ['clean', 'html2js', 'less', 'saveRevision', 'concat:buildapp', 'concat:buildlibs', 'copy']);
+  grunt.registerTask('default', ['clean', 'concat:buildlibs', 'connect', 'watch']);
 };

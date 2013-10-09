@@ -7,37 +7,20 @@
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet">
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- CSS, seems a must! -->
+    <!-- compiled css -->
     <link href="style.css" rel="stylesheet">
-
-    <!-- Libraries required -->
-    <script type="text/javascript" src="libs/angular.js"></script>
-    <script type="text/javascript" src="libs/angular-animate.js"></script>
-    <script type="text/javascript" src="libs/angular-mocks.js"></script>
-    <!-- https://github.com/angular-ui/ui-router -->
-    <script type="text/javascript" src="libs/angular-ui-router.js"></script>
-
-    <!-- roles config -->
-    <script type="text/javascript" src="src/routing-config.js"></script>
-
-    <!-- templates compiled into js -->
-    <script type="text/javascript" src="src/templates-app.js"></script>
-
-    <!-- Angular app and deps -->
-    <script type="text/javascript" src="src/app.js"></script>
-    <script type="text/javascript" src="src/mockhttp.js"></script>
-    <script type="text/javascript" src="src/grandfather.js"></script>
-    <script type="text/javascript" src="src/login-service.js"></script>
-    <script type="text/javascript" src="src/home/home.js"></script>
-    <script type="text/javascript" src="src/private/private.js"></script>
-    <script type="text/javascript" src="src/register/register.js"></script>
-    <script type="text/javascript" src="src/error/error.js"></script>
+    <!-- libraries concatenated -->
+    <script type="text/javascript" src="libs.js"></script>
+    <!-- app concatenated -->
+    <script type="text/javascript" src="app.js"></script>
+    <!-- html templates -->
+    <script type="text/javascript" src="templates-app.js"></script>
 
   </head>
   <body ng-controller="BodyController">
     <div class="container">
       <nav class="navbar navbar-default" role="navigation">
-        <div class="collapse navbar-collapse">
+        <div class="navbar-collapse">
           <!-- Navbar links -->
           <ul class="nav navbar-nav">
             <li ng-class="{ active: $state.is('app.home') }">

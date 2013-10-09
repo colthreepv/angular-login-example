@@ -6,7 +6,9 @@ angular.module('angular-login', [
   'angular-login.home',
   'angular-login.private',
   'angular-login.register',
-  'angular-login.error'
+  'angular-login.error',
+  // components
+  'ui.bootstrap.collapse'
 ])
 .config(function ($urlRouterProvider) {
   $urlRouterProvider.otherwise('/');

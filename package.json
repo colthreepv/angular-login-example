@@ -9,17 +9,21 @@
     "example"
   ],
   "scripts": {
-    "start": "node webserver.js"
+    "start": "grunt"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/mrgamer/angular-login-example.git"
   },
   "devDependencies": {
-    "connect": "latest",
     "grunt": "~0.4.1",
     "grunt-html2js": "~0.1.7",
     "grunt-contrib-less": "~0.7.0",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-git-describe": "~2.3.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-clean": "~0.5.0"
   }
 }

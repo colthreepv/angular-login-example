@@ -1,4 +1,7 @@
-<form class="form-signin" name="registerForm" role="registration">
+<form class="form-poll form-signin" name="registerForm" role="registration">
+  <div class="status">
+    
+  </div>
   <h2 class="form-signin-heading"><i class="icon-user"></i> New User</h2>
   <!--div class="form-group">
     <label for="username" class="col-lg-2 control-label">Email</label>
@@ -9,12 +12,13 @@
   <div class="form-input username">
     <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="" ng-minlength="4" ng-maxlength="16" ng-required="true">
     <div class="errors">
-      <div class="error" ng-show="registerForm.username.$error.minlength">
+      <div class="error ng-hide" ng-show="registerForm.username.$error.minlength">
         <p>Username is too short!</p>
       </div>
+
     </div>
   </div>
-  <span>minlength: {{!registerForm.username.$error.minlength || false}}</span>
+  <span>minlength: {{registerForm.username.$error.minlength}}</span>
   <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
   <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
   <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">

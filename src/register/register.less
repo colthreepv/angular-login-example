@@ -31,10 +31,39 @@
     .errors {
       background-color: #f7f7f9;
       border: 1px solid #e1e1e8;
-      max-height: 60px; // 3 lines ?
       .error {
         margin: 3px 5px;
         white-space: nowrap; // white-space div align
+        overflow: hidden;
+
+        // FIXME: needs rework.
+        &.ng-hide-add {
+          transition: max-height 1s;
+          max-height: 60px;
+          display: block!important;
+
+          &.ng-hide-add-active {
+            max-height: 0px;
+          }
+        }
+        &.ng-hide-remove {
+          transition: max-height 1s;
+          max-height: 0px;
+          display: block!important;
+
+          &.ng-hide-remove-active {
+            max-height: 60px;
+          }
+        }
+
+        // Message inside the .error div
+        &:before {
+          content: 'Error:';
+          display: inline-block;
+          color: #b94a48; // bootstrap 3 .text-danger color
+          width: 40px;
+          vertical-align: top;
+        }
         p {
           display: inline-block;
           white-space: normal; // reset it on children
@@ -47,7 +76,6 @@
             width: 248px;
           }
         }
-
       }
     }
   }

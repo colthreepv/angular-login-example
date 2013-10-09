@@ -78,9 +78,7 @@ module.exports = function (grunt) {
           'libs/angular.js',
           'libs/angular-animate.js',
           'libs/angular-mocks.js',
-          'libs/angular-ui-router.js',
-          'components/bootstrap-ui/src/collapse/collapse.js',
-          'components/bootstrap-ui/src/transition/transition.js'
+          'libs/angular-ui-router.js'
         ],
         dest: 'build/libs.js'
       },

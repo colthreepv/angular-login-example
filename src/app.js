@@ -8,7 +8,7 @@ angular.module('angular-login', [
   'angular-login.register',
   'angular-login.error',
   // components
-  'ui.bootstrap.collapse'
+  'ngAnimate'
 ])
 .config(function ($urlRouterProvider) {
   $urlRouterProvider.otherwise('/');

@@ -9,12 +9,12 @@
   <div class="form-input username">
     <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="" ng-minlength="4" ng-maxlength="16" ng-required="true">
     <div class="errors">
-      <div class="error active">
-        <p class="text-danger">Error: </p>
-        <p>Some bad error haz happened TO YOU SIR!!111</p>
+      <div class="error" ng-show="registerForm.username.$error.minlength">
+        <p>Username is too short!</p>
       </div>
     </div>
   </div>
+  <span>minlength: {{!registerForm.username.$error.minlength || false}}</span>
   <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
   <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
   <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">

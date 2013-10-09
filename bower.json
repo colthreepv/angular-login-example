@@ -1,0 +1,7 @@
+{
+  "name": "angular-login-example",
+  "version": "0.0.0",
+  "dependencies": {
+    "bootstrap-ui": "~0.6.0"
+  }
+}

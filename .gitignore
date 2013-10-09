@@ -10,7 +10,15 @@ lib-cov
 pids
 logs
 results
-style.css
 
 npm-debug.log
 node_modules/
+
+# bower dir
+components/
+
+# build dir
+build/
+
+# release dir
+dest/

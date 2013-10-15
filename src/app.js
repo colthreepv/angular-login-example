@@ -10,22 +10,23 @@ angular.module('angular-login', [
 .config(function ($urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
 })
-.run(function ($rootScope, $window, $location) {
+.run(function ($rootScope) {
   /**
    * $rootScope.doingResolve is a flag useful to display a spinner on changing states.
    * Some states may require remote data so it will take awhile to load.
    */
+  var resolveDone = function () { $rootScope.doingResolve = false; };
   $rootScope.doingResolve = false;
   $rootScope.$on('$stateChangeStart', function () {
     $rootScope.doingResolve = true;
-  });
-  $rootScope.$on('$stateChangeSuccess', function () {
-    $rootScope.doingResolve = false;
   });
   // google analitics
   $rootScope.$on('$stateChangeSuccess', function () {
     $window._gaq.push(['_trackPageview', $location.path()]);
   });
+  $rootScope.$on('$stateChangeSuccess', resolveDone);
+  $rootScope.$on('$stateChangeError', resolveDone);
+  $rootScope.$on('$permissionError', resolveDone);
 })
 .controller('BodyController', function ($scope, $state, $stateParams, loginService, $http) {
   // Expose $state and $stateParams to the <body> tag

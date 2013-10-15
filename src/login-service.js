@@ -67,6 +67,7 @@ angular.module('loginService', [])
           event.preventDefault();
           // test this
           $state.go(errorState, { error: 'unauthorized' }, { location: false, inherit: false });
+          $rootScope.$emit('$permissionError');
         }
       });
 

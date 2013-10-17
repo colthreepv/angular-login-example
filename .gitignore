@@ -15,7 +15,7 @@ npm-debug.log
 node_modules/
 
 # bower dir
-components/
+libs/
 
 # build dir
 build/

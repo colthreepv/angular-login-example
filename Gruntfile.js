@@ -5,6 +5,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-concat-sourcemap');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
@@ -55,7 +56,7 @@ module.exports = function (grunt) {
       },
       sources: {
         files: ['src/**/*.js', 'src/*.js'],
-        tasks: ['concat:buildapp']
+        tasks: ['concat_sourcemap:app']
       },
       index: {
         files: 'index.html',
@@ -65,26 +66,45 @@ module.exports = function (grunt) {
     'git-describe': {
       all: {}
     },
-    concat: {
-      buildapp: {
-        src: ['src/**/*.js', 'src/*.js'],
-        dest: 'build/app.js',
-        options: {
-          banner: '/*! <%=pkg.name %> v<%=grunt.option("gitRevision") %> | date: <%=grunt.template.today("dd-mm-yyyy") %> */\n'
-        }
+    // Useful in future, when i'll need to minify
+    // concat: {
+    //   buildapp: {
+    //     src: ['src/**/*.js', 'src/*.js'],
+    //     dest: 'build/app.js',
+    //     options: {
+    //       banner: '/*! <%=pkg.name %> v<%=grunt.option("gitRevision") %> | date: <%=grunt.template.today("dd-mm-yyyy") %> */\n'
+    //     }
+    //   },
+    //   buildlibs: {
+    //     src: [
+    //       'libs/angular/angular.js',
+    //       'libs/angular-animate/angular-animate.js',
+    //       'libs/angular-mocks/angular-mocks.js',
+    //       'libs/angular-ui-router/release/angular-ui-router.js'
+    //     ],
+    //     dest: 'build/libs.js'
+    //   },
+    //   together: {
+    //     src: ['build/*.js'],
+    //     dest: 'build/all.js'
+    //   }
+    // },
+    concat_sourcemap: {
+      options: {
+        sourcesContent: true
       },
-      buildlibs: {
+      app: {
+        src: ['src/**/*.js', 'src/*.js'],
+        dest: 'build/app.js'
+      },
+      libs: {
         src: [
-          'libs/angular.js',
-          'libs/angular-animate.js',
-          'libs/angular-mocks.js',
-          'libs/angular-ui-router.js'
+          'libs/angular/angular.js',
+          'libs/angular-animate/angular-animate.js',
+          'libs/angular-mocks/angular-mocks.js',
+          'libs/angular-ui-router/release/angular-ui-router.js'
         ],
         dest: 'build/libs.js'
-      },
-      togheter: {
-        src: ['build/*.js'],
-        dest: 'build/all.js'
       }
     },
     copy: {
@@ -123,6 +143,6 @@ module.exports = function (grunt) {
   // - concatenates all the source files in build/app.js - banner with git revision
   // - concatenates all the libraries in build/libs.js
   // - copies index.html over build/
-  grunt.registerTask('build', ['clean', 'html2js', 'less', 'saveRevision', 'concat:buildapp', 'concat:buildlibs', 'copy']);
-  grunt.registerTask('default', ['clean', 'concat:buildlibs', 'connect', 'watch']);
+  grunt.registerTask('build', ['clean', 'html2js', 'less', 'saveRevision', 'concat_sourcemap:app', 'concat_sourcemap:libs', 'copy']);
+  grunt.registerTask('default', ['clean', 'concat_sourcemap:libs', 'connect', 'watch']);
 };

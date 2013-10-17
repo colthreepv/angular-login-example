@@ -1,3 +1,4 @@
+/* jshint -W084 */
 angular.module('angular-login.mock', ['ngMockE2E'])
 .config(function ($provide) {
   $provide.decorator('$httpBackend', function ($delegate) {
@@ -108,9 +109,26 @@ angular.module('angular-login.mock', ['ngMockE2E'])
     });
 
   // fakeRegister
-  $httpBackend.when('POST', '/register')
-    .respond(function (method, url, data, headers) {
-      return [200, {}, {}];
-    });
+  $httpBackend.when('POST', '/user').respond(function (method, url, data, headers) {
+    var checkOnly = headers['X-Check-Only'],
+        errors = [];
+
+    console.log('headers', headers);
+    if (checkOnly) {
+      if (data.password !== data.password2) {
+        errors.push({ field: 'password', error: 'match' });
+      }
+
+      return [
+        200,
+        {
+          valid: true,
+          errors: errors
+        },
+        {}
+      ];
+    }
+    return [200, {}, {}];
+  });
 
 });

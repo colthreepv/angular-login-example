@@ -5,10 +5,10 @@ angular.module('loginService', [])
       logoutState = 'app.home';
 
   this.$get = function ($rootScope, $http, $q, $state) {
+
     /**
      * Low-level, private functions.
      */
-
     var setHeaders = function (token) {
       if (!token) {
         delete $http.defaults.headers.common['X-Token'];
@@ -70,12 +70,16 @@ angular.module('loginService', [])
         }
       });
 
-      // Gets triggered when a resolve isn't fulfilled
-      // da aggiungere un caso in cui il resolve da informazioni solo ad un admin e non ad un user
-      // quindi un url ad esempio /resource/admin
-      // anche un url /resource/user
-      // in questo modo si potrà vedere l'error redirect!
-      // anche un caso in cui sono io che faccio fallire una $q cosi si vede l'errore stringa!
+      /**
+       * Gets triggered when a resolve isn't fulfilled
+       * NOTE: when the user doesn't have required permissions for a state, this event
+       *       it's not triggered.
+       *
+       * In order to redirect to the desired state, the $http status code gets parsed.
+       * If it's an HTTP code (ex: 403), could be prefixed with a string (ex: resolvename403),
+       * to handle same status codes for different resolve(s).
+       * This is defined inside $state.redirectMap.
+       */
       $rootScope.$on('$stateChangeError', function (event, to, toParams, from, fromParams, error) {
         /**
          * This is a very clever way to implement failure redirection.
@@ -113,7 +117,6 @@ angular.module('loginService', [])
     /**
      * High level, public methods
      */
-
     var wrappedService = {
       loginHandler: function (user, status, headers, config) {
         /**

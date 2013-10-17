@@ -2,6 +2,10 @@
   <div class="status">
     
   </div>
+  <div class="alert alert-warning">
+    <p class="text-center"><strong>Please NOTE</strong></p>
+    <p class="text-center">All the data here is fake, it gets stored in your localStorage, it will <strong>NEVER</strong> leave your browser.</p>
+  </div>
   <h2 class="form-signin-heading"><i class="icon-user"></i> New User</h2>
   <!--div class="form-group">
     <label for="username" class="col-lg-2 control-label">Email</label>
@@ -15,12 +19,25 @@
       <div class="error ng-hide" ng-show="registerForm.username.$error.minlength">
         <p>Username is too short!</p>
       </div>
-
     </div>
   </div>
   <span>minlength: {{registerForm.username.$error.minlength}}</span>
-  <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
-  <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
-  <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">
+  <div class="form-input password">
+    <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
+    <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
+    <div class="errors">
+      <div class="error ng-hide" ng-show="registerForm.password.$error.match">
+        <p>Passwords do not match.</p>
+      </div>
+    </div>
+  </div>
+  <div class="form-input email">
+    <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">
+    <div class="errors">
+      <div class="error ng-hide" ng-show="registerForm.email.$error.used">
+        <p>E-Mail is already taken.</p>
+      </div>
+    </div>
+  </div>
   <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
 </form>

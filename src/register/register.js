@@ -9,13 +9,22 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
     });
 })
 .controller('RegisterController', function ($scope, $http) {
+  var first = true,
+      cancelHttp = null;
+
   $scope.registerObj = {
-    username: null,
-    password: null,
-    password2: null,
-    email: null
+    username: undefined,
+    password: undefined,
+    password2: undefined,
+    email: undefined
   };
 
+  $scope.$watch('registerObj', function (newValue, oldValue, scope) {
+    if (first) {
+      first = !first;
+      return;
+    }
+  }, true);
   $scope.submit = function () {
     // $http here.
   };

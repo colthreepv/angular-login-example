@@ -1,24 +1,38 @@
 /* jshint -W084 */
 angular.module('angular-login.mock', ['ngMockE2E'])
-.config(function ($provide) {
-  $provide.decorator('$httpBackend', function ($delegate) {
-    var proxy = function (method, url, data, callback, headers) {
-      var interceptor = function () {
-        var _this = this,
-          _arguments = arguments;
-        setTimeout(function () {
-          callback.apply(_this, _arguments);
-        }, (Math.random() * 1000) + 700);
-      };
-      return $delegate.call(this, method, url, data, interceptor, headers);
-    };
-    for (var key in $delegate) {
-      proxy[key] = $delegate[key];
+.factory('delayHTTP', function ($q, $timeout) {
+  return {
+    request: function (request) {
+      var delayedResponse = $q.defer();
+      $timeout(function () {
+        delayedResponse.resolve(request);
+      }, 500);
+      return delayedResponse.promise;
+    },
+    response: function (response) {
+      var deferResponse = $q.defer();
+
+      if (response.config.timeout && response.config.timeout.then) {
+        response.config.timeout.then(function () {
+          console.log('after timeout!');
+          deferResponse.reject();
+        });
+      } else {
+        deferResponse.resolve(response);
+      }
+
+      return $timeout(function () {
+        deferResponse.resolve(response);
+        return deferResponse.promise;
+      });
     }
-    return proxy;
-  });
+  };
 })
-.run(function ($httpBackend) {
+// delay HTTP
+.config(['$httpProvider', function ($httpProvider) {
+  $httpProvider.interceptors.push('delayHTTP');
+}])
+.run(function ($httpBackend, $log) {
   var userStorage = JSON.parse(localStorage.getItem('userStorage')),
       tokenStorage = JSON.parse(localStorage.getItem('tokenStorage'));
 
@@ -51,67 +65,70 @@ angular.module('angular-login.mock', ['ngMockE2E'])
   };
 
   // fakeLogin
-  $httpBackend.when('POST', '/login')
-    .respond(function (method, url, data, headers) {
-      var formData = JSON.parse(data),
-          user = userStorage[formData.username],
-          newToken,
-          tokenObj;
-      if (angular.isDefined(user) && user.password === formData.password) {
-        newToken = randomUUID();
-        user.tokens.push(newToken);
-        tokenStorage[newToken] = formData.username;
-        localStorage.setItem('userStorage', JSON.stringify(userStorage));
-        localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
-        return [200, { name: user.name, userRole: user.userRole, token: newToken }, {}];
-      } else {
-        return [401, 'wrong combination username/password', {}];
-      }
-    });
+  $httpBackend.when('POST', '/login').respond(function (method, url, data, headers) {
+    var formData = JSON.parse(data),
+        user = userStorage[formData.username],
+        newToken,
+        tokenObj;
+    $log.info(method, '->', url);
+
+    if (angular.isDefined(user) && user.password === formData.password) {
+      newToken = randomUUID();
+      user.tokens.push(newToken);
+      tokenStorage[newToken] = formData.username;
+      localStorage.setItem('userStorage', JSON.stringify(userStorage));
+      localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+      return [200, { name: user.name, userRole: user.userRole, token: newToken }, {}];
+    } else {
+      return [401, 'wrong combination username/password', {}];
+    }
+  });
 
   // fakeLogout
-  $httpBackend.when('GET', '/logout')
-    .respond(function (method, url, data, headers) {
-      var queryToken, userTokens;
+  $httpBackend.when('GET', '/logout').respond(function (method, url, data, headers) {
+    var queryToken, userTokens;
+    $log.info(method, '->', url);
 
-      if (queryToken = headers['X-Token']) {
-        if (angular.isDefined(tokenStorage[queryToken])) {
-          userTokens = userStorage[tokenStorage[queryToken]].tokens;
-          // Update userStorage AND tokenStorage
-          userTokens.splice(userTokens.indexOf(queryToken));
-          delete tokenStorage[queryToken];
-          localStorage.setItem('userStorage', JSON.stringify(userStorage));
-          localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
-          return [200, {}, {}];
-        } else {
-          return [401, 'auth token invalid or expired', {}];
-        }
+    if (queryToken = headers['X-Token']) {
+      if (angular.isDefined(tokenStorage[queryToken])) {
+        userTokens = userStorage[tokenStorage[queryToken]].tokens;
+        // Update userStorage AND tokenStorage
+        userTokens.splice(userTokens.indexOf(queryToken));
+        delete tokenStorage[queryToken];
+        localStorage.setItem('userStorage', JSON.stringify(userStorage));
+        localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+        return [200, {}, {}];
       } else {
         return [401, 'auth token invalid or expired', {}];
       }
-    });
+    } else {
+      return [401, 'auth token invalid or expired', {}];
+    }
+  });
 
   // fakeUser
-  $httpBackend.when('GET', '/user')
-    .respond(function (method, url, data, headers) {
-      var queryToken, userObject;
-      // if is present in a registered users array.
-      if (queryToken = headers['X-Token']) {
-        if (angular.isDefined(tokenStorage[queryToken])) {
-          userObject = userStorage[tokenStorage[queryToken]];
-          return [200, { token: queryToken, name: userObject.name, userRole: userObject.userRole }, {}];
-        } else {
-          return [401, 'auth token invalid or expired', {}];
-        }
+  $httpBackend.when('GET', '/user').respond(function (method, url, data, headers) {
+    var queryToken, userObject;
+    $log.info(method, '->', url);
+
+    // if is present in a registered users array.
+    if (queryToken = headers['X-Token']) {
+      if (angular.isDefined(tokenStorage[queryToken])) {
+        userObject = userStorage[tokenStorage[queryToken]];
+        return [200, { token: queryToken, name: userObject.name, userRole: userObject.userRole }, {}];
       } else {
         return [401, 'auth token invalid or expired', {}];
       }
-    });
+    } else {
+      return [401, 'auth token invalid or expired', {}];
+    }
+  });
 
   // fakeRegister
   $httpBackend.when('POST', '/user').respond(function (method, url, data, headers) {
     var checkOnly = headers['X-Check-Only'],
         errors = [];
+    $log.info(method, '->', url);
 
     console.log('headers', headers);
     if (checkOnly) {
@@ -128,6 +145,11 @@ angular.module('angular-login.mock', ['ngMockE2E'])
         {}
       ];
     }
+    return [200, {}, {}];
+  });
+
+  $httpBackend.when('GET', 'style.css').respond(function (method, url, data, headers) {
+    // $log.info(method, '->', url);
     return [200, {}, {}];
   });
 

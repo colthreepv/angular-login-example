@@ -4,8 +4,9 @@
     <title>angular-login-service</title>
 
     <!-- BootstrapCDN -->
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <!-- <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="http://netdna.bootstrapcdn.com/bootswatch/3.0.1/slate/bootstrap.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- compiled css -->
     <link href="style.css" rel="stylesheet">
@@ -19,7 +20,7 @@
   </head>
   <body ng-controller="BodyController">
     <div class="container">
-      <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar navbar-default" role="navigation">
         <div class="navbar-collapse">
           <!-- Navbar links -->
           <ul class="nav navbar-nav">
@@ -30,7 +31,7 @@
               <a ui-sref="app.private">Admin-Only page</a>
             </li>
             <li ng-class="{ active: $state.is('app.register') }">
-              <a ui-sref="app.register">Register <i class="icon-user"></i>+</a>
+              <a ui-sref="app.register">Register <i class="fa fa-user"></i>+</a>
             </li>
           </ul>
           <!-- Right side of the navbar -->
@@ -42,11 +43,11 @@
             <div class="form-group">
               <input type="password" class="form-control" ng-model="login.password" name="password" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-default" ng-disabled="login.working">Login <i class="icon-signin"></i></button>
+            <button type="submit" class="btn btn-default hidden-devices" ng-disabled="login.working">Login <i class="fa" ng-class="login.working ? 'fa-cog fa-spin' : 'fa-sign-in'"></i></button>
           </form>
           <!-- Spinner -->
           <button class="btn btn-default navbar-btn navbar-right" ng-hide="ls.doneLoading">
-            <i class="icon-spinner icon-spin"></i>
+            <i class="fa fa-spinner fa-spin"></i>
           </button>
           <!-- Logout Form -->
           <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
@@ -54,15 +55,13 @@
               <label>Hello {{ ls.user.name }}</label>
             </div>
             <div class="form-group">
-              <button  type="submit" class="btn btn-default">Logout <i class="icon-signout"></i></button>
+              <button  type="submit" class="btn btn-default">Logout <i class="fa fa-signout"></i></button>
             </div>
           </form>
-          </ul>
         </div>
-      </nav>
       <ui-view ng-hide="doingResolve"></ui-view>
       <div class="jumbotron loading-jumbo" ng-show="doingResolve">
-        <h1><i class="icon-refresh icon-2x icon-spin"></i> Loading</h1>
+        <h1><i class="fa fa-refresh fa-2x fa-spin"></i> Loading</h1>
       </div>
     </div>
   </body>

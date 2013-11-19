@@ -41,13 +41,13 @@
     margin-bottom: 10px;
     .errors {
       background-color: softlight(@slate-color, white);
-      border: 1px solid #666666;
+      border: 1px solid transparent;
       border-radius: 4px;
       transition: border-color 1s;
 
       // hides borders if .errors is empty
-      &.empty{
-        border-color: transparent;
+      &.active {
+        border-color: #666666;
       }
       .error {
         margin: 3px 5px;
@@ -98,10 +98,13 @@
       }
     }
   }
-  .form-signin-heading, .checkbox {
-    margin-bottom: 10px;
+  .form-signin-heading {
+    font-weight: 800;
+    text-shadow: 2px 2px 4px black;
+    margin-bottom: 10px
   }
   .checkbox {
     font-weight: normal;
+    margin-bottom: 10px;
   }
 }

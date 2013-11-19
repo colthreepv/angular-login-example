@@ -26,7 +26,7 @@ angular.module('angular-login', [
     $rootScope.doingResolve = false;
   });
 })
-.controller('BodyController', function ($scope, $state, $stateParams, loginService, $http) {
+.controller('BodyController', function ($scope, $state, $stateParams, loginService, $http, $timeout) {
   // Expose $state and $stateParams to the <body> tag
   $scope.$state = $state;
   $scope.$stateParams = $stateParams;
@@ -34,16 +34,19 @@ angular.module('angular-login', [
   // loginService exposed and a new Object containing login user/pwd
   $scope.ls = loginService;
   $scope.login = {
-    working: false
+    working: false,
+    wrong: false
   };
   $scope.loginMe = function () {
     // setup promise, and 'working' flag
     var loginPromise = $http.post('/login', $scope.login);
     $scope.login.working = true;
+    $scope.login.wrong = false;
 
     loginService.loginUser(loginPromise);
-    loginPromise.success(function () {
-      $scope.login = { working: false };
+    loginPromise.error(function () {
+      $scope.login.wrong = true;
+      $timeout(function () { $scope.login.wrong = false; }, 8000);
     });
     loginPromise.finally(function () {
       $scope.login.working = false;

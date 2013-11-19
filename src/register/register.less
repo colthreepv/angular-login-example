@@ -1,3 +1,5 @@
+@slate-color: rgb(39, 43, 48);
+
 .form-poll {
   position: relative;
   .status {
@@ -11,8 +13,8 @@
   max-width: 400px;
   padding: 15px;
   margin: 0 auto;
-  background-color: #eee;
-  box-shadow: 1px 1px 2px 2px #ccc;
+  background-color: lighten(@slate-color, 10%);
+  box-shadow: 1px 1px 2px 2px lighten(@slate-color, 20%);
   border-radius: 5px;
   .form-control:focus {
       z-index: 2;
@@ -38,8 +40,15 @@
   .form-input {
     margin-bottom: 10px;
     .errors {
-      background-color: #f7f7f9;
-      border: 1px solid #e1e1e8;
+      background-color: softlight(@slate-color, white);
+      border: 1px solid #666666;
+      border-radius: 4px;
+      transition: border-color 1s;
+
+      // hides borders if .errors is empty
+      &.empty{
+        border-color: transparent;
+      }
       .error {
         margin: 3px 5px;
         white-space: nowrap; // white-space div align
@@ -69,7 +78,8 @@
         &:before {
           content: 'Error:';
           display: inline-block;
-          color: #b94a48; // bootstrap 3 .text-danger color
+          color: #FA3F3C;
+          font-weight: 800;
           width: 40px;
           vertical-align: top;
         }

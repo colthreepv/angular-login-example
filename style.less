@@ -1,3 +1,5 @@
+@import 'libs/bootstrap/less/mixins.less';
+@import 'libs/bootstrap/less/variables.less';
 @import 'src/register/register.less';
 
 .container {
@@ -6,4 +8,20 @@
 .loading-jumbo {
   text-align: center;
   cursor: progress;
+}
+
+// Utility class to hide elements when in 'sm' or 'xs' bootstrap media size
+.hidden-devices {
+  @media (max-width: @screen-sm-max) {
+    .responsive-invisibility();
+  }
+}
+
+.login-error {
+  height: 0;
+  overflow: hidden;
+  transition: height 1s;
+  &.active {
+    height: 50px;
+  }
 }

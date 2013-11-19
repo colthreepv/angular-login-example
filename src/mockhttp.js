@@ -14,7 +14,6 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 
       if (response.config.timeout && response.config.timeout.then) {
         response.config.timeout.then(function () {
-          console.log('after timeout!');
           deferResponse.reject();
         });
       } else {
@@ -138,7 +137,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
         errors = [];
     $log.info(method, '->', url);
 
-    console.log('headers', headers);
+    // console.log('headers', headers);
     if (checkOnly) {
       if (data.password !== data.password2) {
         errors.push({ field: 'password', error: 'match' });

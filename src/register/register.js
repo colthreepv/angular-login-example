@@ -8,28 +8,38 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
       accessLevel: accessLevels.anon
     });
 })
-.factory('httpQuery', function ($http, $httpBackend, $rootScope, $q) {
-  return function (url) {
-    var cancelQuery = null;
-    return function runQuery(query) {
-      // if we were running a query before,
-      // cancel it so it doesn't invoke its success callback
-      if (cancelQuery) {
-        cancelQuery.resolve();
-      }
-      cancelQuery = $q.defer();
-      return $http
-        .get(url, {
-          timeout: cancelQuery.promise
-        })
-        .success(function (data, status) {
-          console.log('response');
-          cancelQuery = null;
-        });
-    };
+/**
+ * Factory service that keeps track of $http requests.
+ * Main goal is to cancel $http requests if there is already
+ * an ongoing one.
+ *
+ * Requests that are awaiting response are kept tracked in deferedStore.
+ * You can request different url(s) and make them timeout politely in such way
+ */
+.factory('limitHttp', function ($http, $httpBackend, $rootScope, $q) {
+  var cancelQuery = null,
+      deferedStore = {};
+
+  return function (method, url) {
+    // if we were running a query before,
+    // cancel it so it doesn't invoke its success callback
+    if (deferedStore[url] && deferedStore[url][method]) {
+      deferedStore[url][method].resolve();
+    }
+    // create a new defered in deferedStore -> url -> methodname
+    deferedStore[url] = {};
+    deferedStore[url][method] = $q.defer();
+    return $http({
+      method: method,
+      url: url,
+      timeout: deferedStore[url][method].promise
+    })
+    .success(function () {
+      deferedStore[url][method] = null;
+    });
   };
 })
-.controller('RegisterController', function ($scope, httpQuery) {
+.controller('RegisterController', function ($scope, limitHttp) {
   var first = true,
       cancelHttp = null;
 
@@ -40,8 +50,6 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
     email: undefined
   };
 
-  var someQuery = httpQuery('style.css');
-
   /**
    * continuos form remote checking
    */
@@ -51,7 +59,7 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
       return;
     }
 
-    var httpPromise = someQuery();
+    var httpPromise = limitHttp('POST', '/user');
     $scope.status = 'loading...';
     httpPromise.success(function (data) {
       $scope.result = data;

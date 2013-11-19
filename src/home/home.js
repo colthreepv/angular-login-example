@@ -3,6 +3,10 @@ angular.module('angular-login.home', ['angular-login.grandfather'])
   $stateProvider
     .state('app.home', {
       url: '/',
-      templateUrl: 'home/home.tpl.html'
+      templateUrl: 'home/home.tpl.html',
+      controller: 'HomeController'
     });
+})
+.controller('HomeController', function ($scope) {
+  $scope.users = angular.fromJson(localStorage.getItem('userStorage'));
 });

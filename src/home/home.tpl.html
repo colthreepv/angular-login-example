@@ -1,6 +1,21 @@
 <div class="jumbotron">
   <h1>This is home!</h1>
-  <p>Everybody can access this page, for the following pages use:</p>
-  <p class="text-info">username: johnm, password: hello, permission: user</p>
-  <p class="text-danger">username: sandrab, password: world, permission: admin</p>
+  <p>Everybody can access this page, the other credentials stored are:</p>
+  <div ng-repeat="user in users">
+    <h2>{{ user.name }}</h2>
+    <p ng-class="{ 'text-info': user.userRole.title === 'user', 'text-danger': user.userRole.title === 'admin' }">
+      username: {{ user.username }}, password: {{ user.password }}, permission: {{ user.userRole.title }}
+    </p>
+  </div>
 </div>
+
+<h2>native json</h2>
+<p>angular provides the real json object</p>
+<pre>
+  <code>
+{{ users | json }}
+  </code>
+</pre>
+
+<h2>You can keep track of mocked http requests</h2>
+<p>Just open the console of your favourite browser and the ngMock will print out the requests as console.info.</p>

@@ -1,4 +1,4 @@
-angular-login-example
+angular-login-example [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mrgamer/angular-login-example/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 =====================
 
 Stand-alone project showing how to make a robust angular application serving access permissions from Server.

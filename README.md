@@ -380,3 +380,7 @@ angular.module('myapp.funny', ['myapp.grandfather'])
 
   [angular-ui-router-urlprovider]: https://github.com/angular-ui/ui-router/wiki/URL-Routing#urlrouterprovider
   [angular-ui-router-abstractstate]: https://github.com/angular-ui/ui-router/wiki/Nested-States-%26-Nested-Views#abstract-states
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mrgamer/angular-login-example/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

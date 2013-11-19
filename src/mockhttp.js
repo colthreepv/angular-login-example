@@ -32,19 +32,27 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 .config(['$httpProvider', function ($httpProvider) {
   $httpProvider.interceptors.push('delayHTTP');
 }])
-.run(function ($httpBackend, $log) {
-  var userStorage = JSON.parse(localStorage.getItem('userStorage')),
-      tokenStorage = JSON.parse(localStorage.getItem('tokenStorage'));
+.constant('loginExampleData', {
+  version: '0.2.0'
+})
+.run(function ($httpBackend, $log, loginExampleData) {
+  var userStorage = angular.fromJson(localStorage.getItem('userStorage')),
+      tokenStorage = angular.fromJson(localStorage.getItem('tokenStorage')) || {},
+      loginExample = angular.fromJson(localStorage.getItem('loginExample'));
+
+  // Check and corrects old localStorage values, backward-compatibility!
+  if (!loginExample || loginExample.version !== loginExampleData.version) {
+    userStorage = null;
+    tokenStorage = null;
+    localStorage.setItem('loginExample', angular.toJson(loginExampleData));
+  }
 
   if (userStorage === null) {
     userStorage = {
-      'johnm': { name: 'John', password: 'hello', userRole: userRoles.user, tokens: [] },
-      'sandrab': { name: 'Sandra', password: 'world', userRole: userRoles.admin, tokens: [] }
+      'johnm': { name: 'John', username: 'johnm', password: 'hello', userRole: userRoles.user, tokens: [] },
+      'sandrab': { name: 'Sandra', username: 'sandrab', password: 'world', userRole: userRoles.admin, tokens: [] }
     };
-    localStorage.setItem('userStorage', JSON.stringify(userStorage));
-  }
-  if (tokenStorage === null) {
-    tokenStorage = {};
+    localStorage.setItem('userStorage', angular.toJson(userStorage));
   }
 
   /**
@@ -66,7 +74,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 
   // fakeLogin
   $httpBackend.when('POST', '/login').respond(function (method, url, data, headers) {
-    var formData = JSON.parse(data),
+    var formData = angular.fromJson(data),
         user = userStorage[formData.username],
         newToken,
         tokenObj;
@@ -76,8 +84,8 @@ angular.module('angular-login.mock', ['ngMockE2E'])
       newToken = randomUUID();
       user.tokens.push(newToken);
       tokenStorage[newToken] = formData.username;
-      localStorage.setItem('userStorage', JSON.stringify(userStorage));
-      localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+      localStorage.setItem('userStorage', angular.toJson(userStorage));
+      localStorage.setItem('tokenStorage', angular.toJson(tokenStorage));
       return [200, { name: user.name, userRole: user.userRole, token: newToken }, {}];
     } else {
       return [401, 'wrong combination username/password', {}];
@@ -95,8 +103,8 @@ angular.module('angular-login.mock', ['ngMockE2E'])
         // Update userStorage AND tokenStorage
         userTokens.splice(userTokens.indexOf(queryToken));
         delete tokenStorage[queryToken];
-        localStorage.setItem('userStorage', JSON.stringify(userStorage));
-        localStorage.setItem('tokenStorage', JSON.stringify(tokenStorage));
+        localStorage.setItem('userStorage', angular.toJson(userStorage));
+        localStorage.setItem('tokenStorage', angular.toJson(tokenStorage));
         return [200, {}, {}];
       } else {
         return [401, 'auth token invalid or expired', {}];

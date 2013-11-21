@@ -3,19 +3,21 @@ angular-login-example [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mr
 
 Stand-alone project showing how to make a robust angular application serving access permissions from Server.
 
+#### Changes in `0.2.0`
+A new (polishing) release has been in work for the last months, differences are only in the demo app, not in the service.
+
+  * You can now add users in the demo, and they gets displayed in homepage.
+  * Style is way more polished, I hope you can find useful snippets out of it.
+  * Registration form provides a nice error feedback, you can dig into the code for the details.
+  * All the `ngMock` requests gets printed in the console!
+
 # Table of Contents
 
   * [What this is example for](#what-is-this-example-for)
     * [but there are other...?](#but-there-are-other)
     * [Token Revocation](#token-revocation)
-  * Roadmap to 0.2.0
-    * Register new users
-    * ngmin and minify && build/ folder
-    * more than one README.md, if needed.
-    * fake email register and activation
-    * more user levels
   * [Libraries Used](#libraries-used)
-    * [angular.js 1.2.0-rc2](#angularjs-120-rc2)
+    * [angular.js](#angularjs)
     * [angular-ui-router](#angular-ui-router)
     * [angular-mocks](#angular-mocks)
   * [loginService](#loginservice)
@@ -102,7 +104,7 @@ As personal taste, i haven't found it particularly elegant, so a more radical/di
 
 # Libraries used
 
-## angular.js 1.2.0-rc2
+## angular.js
 You should know this one :-)
 In this release the dev team has put routing in a separate file because there are alternative projects like... 
 

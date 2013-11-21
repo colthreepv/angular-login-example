@@ -14,7 +14,8 @@
     </div>
   </div-->
   <div class="form-input username">
-    <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="true" ng-minlength="4" ng-maxlength="16" ng-required="true">
+    <input type="text" class="form-control" placeholder="Username" name="username" ng-model="registerObj.username" autofocus="true"
+      ng-minlength="4" ng-maxlength="16" ng-required="true" remote-validated="used">
     <div class="errors" ng-class="{ active: registerForm.username.$invalid && registerForm.username.$dirty }">
       <div class="error ng-hide" ng-show="registerForm.username.$error.minlength">
         <p>Username is too short!</p>
@@ -39,7 +40,7 @@
     </div>
   </div>
   <div class="form-input password">
-    <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password" ng-minlength="4" ng-maxlength="16" password-match="registerObj.password2">
+    <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password" ng-minlength="4" ng-maxlength="16" ng-required="true" password-match="registerObj.password2">
     <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
     <div class="errors" ng-class="{ active: registerForm.password.$invalid && registerForm.password.$dirty }">
       <div class="error ng-hide" ng-show="registerForm.password.$error.match">
@@ -54,7 +55,7 @@
     </div>
   </div>
   <div class="form-input email">
-    <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email" remote-validated="used">
+    <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email" ng-required="true" remote-validated="used">
     <div class="errors" ng-class="{ active: registerForm.email.$invalid && registerForm.email.$dirty }">
       <div class="error ng-hide" ng-show="registerForm.email.$error.email">
         <p>E-Mail seems invalid.</p>
@@ -64,5 +65,10 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+  <button class="btn btn-lg btn-block" type="submit"
+    ng-class="{ 'btn-primary': registerForm.$valid && registerForm.$dirty, 'btn-success': redirect }"
+    ng-disabled="registerForm.$invalid || registerForm.$pristine || xhr || redirect">
+    <span ng-hide="redirect">Register <i class="fa fa-repeat fa-spin" ng-show="xhr"></i></span>
+    <span ng-show="redirect">Redirecting... <i class="fa fa-repeat fa-spin"></i></span>
+  </button>
 </form>

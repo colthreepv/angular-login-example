@@ -36,6 +36,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 })
 .run(function ($httpBackend, $log, loginExampleData) {
   var userStorage = angular.fromJson(localStorage.getItem('userStorage')),
+      emailStorage = angular.fromJson(localStorage.getItem('emailStorage')),
       tokenStorage = angular.fromJson(localStorage.getItem('tokenStorage')) || {},
       loginExample = angular.fromJson(localStorage.getItem('loginExample'));
 
@@ -46,12 +47,17 @@ angular.module('angular-login.mock', ['ngMockE2E'])
     localStorage.setItem('loginExample', angular.toJson(loginExampleData));
   }
 
-  if (userStorage === null) {
+  if (userStorage === null || emailStorage === null) {
     userStorage = {
-      'johnm': { name: 'John', username: 'johnm', password: 'hello', userRole: userRoles.user, tokens: [] },
-      'sandrab': { name: 'Sandra', username: 'sandrab', password: 'world', userRole: userRoles.admin, tokens: [] }
+      'johnm': { name: 'John', username: 'johnm', password: 'hello', email: 'john.dott@myemail.com', userRole: userRoles.user, tokens: [] },
+      'sandrab': { name: 'Sandra', username: 'sandrab', password: 'world', email: 'bitter.s@provider.com', userRole: userRoles.admin, tokens: [] }
+    };
+    emailStorage = {
+      'john.dott@myemail.com': 'johnm',
+      'bitter.s@provider.com': 'sandrab'
     };
     localStorage.setItem('userStorage', angular.toJson(userStorage));
+    localStorage.setItem('emailStorage', angular.toJson(emailStorage));
   }
 
   /**
@@ -73,16 +79,16 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 
   // fakeLogin
   $httpBackend.when('POST', '/login').respond(function (method, url, data, headers) {
-    var formData = angular.fromJson(data),
-        user = userStorage[formData.username],
+    var postData = angular.fromJson(data),
+        user = userStorage[postData.username],
         newToken,
         tokenObj;
     $log.info(method, '->', url);
 
-    if (angular.isDefined(user) && user.password === formData.password) {
+    if (angular.isDefined(user) && user.password === postData.password) {
       newToken = randomUUID();
       user.tokens.push(newToken);
-      tokenStorage[newToken] = formData.username;
+      tokenStorage[newToken] = postData.username;
       localStorage.setItem('userStorage', angular.toJson(userStorage));
       localStorage.setItem('tokenStorage', angular.toJson(tokenStorage));
       return [200, { name: user.name, userRole: user.userRole, token: newToken }, {}];
@@ -133,31 +139,32 @@ angular.module('angular-login.mock', ['ngMockE2E'])
 
   // fakeRegister
   $httpBackend.when('POST', '/user').respond(function (method, url, data, headers) {
-    var checkOnly = headers['X-Check-Only'],
+    var postData = angular.fromJson(data),
         errors = [];
     $log.info(method, '->', url);
 
     // console.log('headers', headers);
-    if (checkOnly) {
-      if (data.password !== data.password2) {
-        errors.push({ field: 'password', error: 'match' });
-      }
-
-      return [
-        200,
-        {
-          valid: true,
-          errors: errors
-        },
-        {}
-      ];
+    if (angular.isDefined(userStorage[postData.username])) {
+      errors.push({ field: 'username', name: 'used' });
     }
-    return [200, {}, {}];
-  });
 
-  $httpBackend.when('GET', 'style.css').respond(function (method, url, data, headers) {
-    // $log.info(method, '->', url);
-    return [200, {}, {}];
+    if (angular.isDefined(emailStorage[postData.email])) {
+      errors.push({ field: 'email', name: 'used' });
+    }
+
+    // if (checkOnly) {
+    //   if (data.password !== data.password2) {
+    //     errors.push({ field: 'password', error: 'match' });
+    //   }
+
+    if (errors.length) {
+      return [409, {
+        valid: false,
+        errors: errors
+      }, {}];
+    } else {
+      return [201, { valid: true, creationDate: Date.now() }, {}];
+    }
   });
 
 });

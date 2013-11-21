@@ -1,7 +1,4 @@
-<form class="form-poll form-signin" name="registerForm" role="registration" ng-submit="submit(registerForm)">
-  <div class="status">
-    
-  </div>
+<form class="form-signin" name="registerForm" role="registration" ng-submit="submit(registerForm)">
   <div class="alert alert-warning">
     <p class="text-center"><strong>Please NOTE</strong></p>
     <p class="text-center">All the data here is fake, it gets stored in your localStorage, it will <strong>NEVER</strong> leave your browser.</p>
@@ -64,6 +61,12 @@
         <p>E-Mail is already taken.</p>
       </div>
     </div>
+  </div>
+  <div class="form-input role">
+    <select class="form-control" name="role" ng-model="registerObj.role">
+      <option value="user" selected>User</option>
+      <option value="admin">Administrator</option>
+    </select>
   </div>
   <button class="btn btn-lg btn-block" type="submit"
     ng-class="{ 'btn-primary': registerForm.$valid && registerForm.$dirty, 'btn-success': redirect }"

@@ -13,10 +13,7 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
   $scope.redirect = false;
 
   $scope.registerObj = {
-    username: undefined,
-    password: undefined,
-    password2: undefined,
-    email: undefined
+    role: 'user'
   };
 
   $scope.submit = function (formInstance) {

@@ -4,7 +4,7 @@
   <div ng-repeat="user in users">
     <h2>{{ user.name }}</h2>
     <p ng-class="{ 'text-info': user.userRole.title === 'user', 'text-danger': user.userRole.title === 'admin' }">
-      username: {{ user.username }}, password: {{ user.password }}, permission: {{ user.userRole.title }}
+      username: {{ user.username }}, password: {{ user.password }}, email: {{ user.email }}, permission: {{ user.userRole.title }}
     </p>
   </div>
 </div>

@@ -2,6 +2,7 @@ angular.module('angular-login', [
   // login service
   'loginService',
   'angular-login.mock',
+  'angular-login.directives',
   // different app sections
   'angular-login.home',
   'angular-login.private',

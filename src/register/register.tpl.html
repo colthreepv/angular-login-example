@@ -1,4 +1,4 @@
-<form class="form-poll form-signin" name="registerForm" role="registration">
+<form class="form-poll form-signin" name="registerForm" role="registration" ng-submit="submit(registerForm)">
   <div class="status">
     
   </div>
@@ -22,9 +22,11 @@
       <div class="error ng-hide" ng-show="registerForm.username.$error.maxlength">
         <p>Max username length is 16, please shorten it.</p>
       </div>
+      <div class="error ng-hide" ng-show="registerForm.username.$error.used">
+        <p>Username is already taken.</p>
+      </div>
     </div>
   </div>
-  <p>minlength: {{registerForm.username.$error.minlength}}</p>
   <div class="form-input name">
     <input type="text" class="form-control" placeholder="Real Name" name="name" ng-model="registerObj.name" ng-minlength="4" ng-maxlength="32" ng-required="true">
     <div class="errors" ng-class="{ active: registerForm.name.$invalid && registerForm.name.$dirty }">
@@ -37,17 +39,26 @@
     </div>
   </div>
   <div class="form-input password">
-    <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password">
+    <input type="password" class="form-control password" placeholder="Password" name="password" ng-model="registerObj.password" ng-minlength="4" ng-maxlength="16" password-match="registerObj.password2">
     <input type="password" class="form-control password2" placeholder="Repeat Password" name="password2" ng-model="registerObj.password2">
     <div class="errors" ng-class="{ active: registerForm.password.$invalid && registerForm.password.$dirty }">
       <div class="error ng-hide" ng-show="registerForm.password.$error.match">
         <p>Passwords do not match.</p>
       </div>
+      <div class="error ng-hide" ng-show="registerForm.password.$error.minlength">
+        <p>For your own safety, use a password longer than 4 characters.</p>
+      </div>
+      <div class="error ng-hide" ng-show="registerForm.password.$error.maxlength">
+        <p>For your own <b>SANITY</b>, use a password shorter than 16 characters.</p>
+      </div>
     </div>
   </div>
   <div class="form-input email">
-    <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email">
+    <input type="email" class="form-control email" placeholder="E-Mail" name="email" ng-model="registerObj.email" remote-validated="used">
     <div class="errors" ng-class="{ active: registerForm.email.$invalid && registerForm.email.$dirty }">
+      <div class="error ng-hide" ng-show="registerForm.email.$error.email">
+        <p>E-Mail seems invalid.</p>
+      </div>
       <div class="error ng-hide" ng-show="registerForm.email.$error.used">
         <p>E-Mail is already taken.</p>
       </div>

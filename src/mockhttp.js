@@ -6,7 +6,7 @@ angular.module('angular-login.mock', ['ngMockE2E'])
       var delayedResponse = $q.defer();
       $timeout(function () {
         delayedResponse.resolve(request);
-      }, 500);
+      }, 700);
       return delayedResponse.promise;
     },
     response: function (response) {

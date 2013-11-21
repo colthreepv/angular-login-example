@@ -54,7 +54,6 @@ angular.module('angular-login.directives', [])
           if (controller.$error[attrs.remoteValidated]) {
             invalidItems.push(oldValue);
           }
-          console.log('watch fired, value:', newValue);
           controller.$setValidity(attrs.remoteValidated, true);
         }
       });

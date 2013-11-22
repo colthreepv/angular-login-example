@@ -1,7 +1,119 @@
+.form-signin {
+  max-width: 400px;
+  padding: 15px;
+  margin: 0 auto;
+  background-color: #3e444c;
+  box-shadow: 1px 1px 2px 2px #555d68;
+  border-radius: 5px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+}
+.form-signin input.password {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input.password2 {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.form-signin .form-input {
+  margin-bottom: 10px;
+}
+.form-signin .form-input .errors {
+  background-color: #484f57;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: border-color 1s;
+}
+.form-signin .form-input .errors.active {
+  border-color: #666666;
+}
+.form-signin .form-input .errors .error {
+  margin: 3px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.form-signin .form-input .errors .error.ng-hide-add {
+  transition: max-height 0.5s;
+  max-height: 60px;
+  display: block!important;
+}
+.form-signin .form-input .errors .error.ng-hide-add.ng-hide-add-active {
+  max-height: 0px;
+}
+.form-signin .form-input .errors .error.ng-hide-remove {
+  transition: max-height 0.5s;
+  max-height: 0px;
+  display: block!important;
+}
+.form-signin .form-input .errors .error.ng-hide-remove.ng-hide-remove-active {
+  max-height: 60px;
+}
+.form-signin .form-input .errors .error:before {
+  content: 'Error:';
+  display: inline-block;
+  color: #FA3F3C;
+  font-weight: 800;
+  width: 40px;
+  vertical-align: top;
+}
+.form-signin .form-input .errors .error p {
+  display: inline-block;
+  white-space: normal;
+  margin: 0;
+}
+.form-signin .form-input .errors .error p:first-child {
+  width: 40px;
+  vertical-align: top;
+}
+.form-signin .form-input .errors .error p:last-child {
+  width: 316px;
+}
+.form-signin .form-signin-heading {
+  font-weight: 800;
+  text-shadow: 2px 2px 4px black;
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+  margin-bottom: 10px;
+}
 .container {
   -webkit-backface-visibility: hidden;
 }
 .loading-jumbo {
   text-align: center;
   cursor: progress;
+}
+@media (max-width: 991px) {
+  .hidden-devices,
+  tr.hidden-devices,
+  th.hidden-devices,
+  td.hidden-devices {
+    display: none !important;
+  }
+}
+.login-error {
+  height: 0;
+  overflow: hidden;
+  transition: height 1s;
+}
+.login-error.active {
+  height: 50px;
+}
+.btn {
+  transition-duration: .5s;
+  transition-property: color, background-color;
+  transition-timing-function: ease;
+}
+.jumbotron h1 {
+  text-shadow: 1px 1px 1px grey;
 }

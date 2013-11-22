@@ -4,46 +4,37 @@
     <title>angular-login-service</title>
 
     <!-- BootstrapCDN -->
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.1/slate/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- CSS, seems a must! -->
+    <!-- compiled css -->
     <link href="style.css" rel="stylesheet">
-
-    <!-- Libraries required -->
-    <script type="text/javascript" src="libs/angular.js"></script>
-    <script type="text/javascript" src="libs/angular-animate.js"></script>
-    <script type="text/javascript" src="libs/angular-mocks.js"></script>
-    <!-- https://github.com/angular-ui/ui-router -->
-    <script type="text/javascript" src="libs/angular-ui-router.js"></script>
-
-    <!-- roles config -->
-    <script type="text/javascript" src="src/routing-config.js"></script>
-
-    <!-- templates compiled into js -->
-    <script type="text/javascript" src="src/templates-app.js"></script>
-
-    <!-- Angular app and deps -->
-    <script type="text/javascript" src="src/app.js"></script>
-    <script type="text/javascript" src="src/mockhttp.js"></script>
-    <script type="text/javascript" src="src/grandfather.js"></script>
-    <script type="text/javascript" src="src/login-service.js"></script>
-    <script type="text/javascript" src="src/home/home.js"></script>
-    <script type="text/javascript" src="src/private/private.js"></script>
-    <script type="text/javascript" src="src/error/error.js"></script>
+    <!-- libraries concatenated -->
+    <script type="text/javascript" src="libs.js"></script>
+    <!-- app concatenated -->
+    <script type="text/javascript" src="app.js"></script>
+    <!-- html templates -->
+    <script type="text/javascript" src="templates-app.js"></script>
 
   </head>
   <body ng-controller="BodyController">
     <div class="container">
-      <nav class="navbar navbar-default" role="navigation">
-        <div class="collapse navbar-collapse">
+      <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-collapse">
           <!-- Navbar links -->
           <ul class="nav navbar-nav">
             <li ng-class="{ active: $state.is('app.home') }">
-              <a href="" ng-click="$state.go('app.home')">Home</a>
+              <a ui-sref="app.home">Home</a>
             </li>
-            <li ng-class="{ active: $state.is('app.private') }">
-              <a href="" ng-click="$state.go('app.private')">Admin-Only page</a>
+            <li ng-class="{ active: $state.is('app.admin') }">
+              <a ui-sref="app.admin">Admin-Only page</a>
+            </li>
+            <li ng-class="{ active: $state.is('app.user') }">
+              <a ui-sref="app.user">Registered-Only page</a>
+            </li>
+            <li ng-class="{ active: $state.is('app.register') }">
+              <a ui-sref="app.register">Register <i class="fa fa-user"></i>+</a>
             </li>
           </ul>
           <!-- Right side of the navbar -->
@@ -55,11 +46,11 @@
             <div class="form-group">
               <input type="password" class="form-control" ng-model="login.password" name="password" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-default" ng-disabled="login.working">Login <i class="icon-signin"></i></button>
+            <button type="submit" class="btn btn-default hidden-devices" ng-disabled="login.working">Login <i class="fa" ng-class="login.working ? 'fa-cog fa-spin' : 'fa-sign-in'"></i></button>
           </form>
           <!-- Spinner -->
           <button class="btn btn-default navbar-btn navbar-right" ng-hide="ls.doneLoading">
-            <i class="icon-spinner icon-spin"></i>
+            <i class="fa fa-spinner fa-spin"></i>
           </button>
           <!-- Logout Form -->
           <form class="navbar-form navbar-right" role="logout" ng-submit="logoutMe()" ng-show="ls.isLogged">
@@ -67,27 +58,18 @@
               <label>Hello {{ ls.user.name }}</label>
             </div>
             <div class="form-group">
-              <button  type="submit" class="btn btn-default">Logout <i class="icon-signout"></i></button>
+              <button  type="submit" class="btn btn-default">Logout <i class="fa fa-signout"></i></button>
             </div>
           </form>
-          </ul>
         </div>
-      </nav>
+        <div class="login-error" ng-class="{ 'active': login.wrong }">
+          <div class="alert alert-danger"><b>Error:</b> Server (WUT?) said your user/pass doesn't match existing users.</div>
+        </div>
+      </div>
       <ui-view ng-hide="doingResolve"></ui-view>
       <div class="jumbotron loading-jumbo" ng-show="doingResolve">
-        <h1><i class="icon-refresh icon-2x icon-spin"></i> Loading</h1>
+        <h1><i class="fa fa-refresh fa-2x fa-spin"></i> Loading</h1>
       </div>
     </div>
   </body>
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-42785441-2']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
 </html>

@@ -65,7 +65,7 @@ angular.module('loginService', [])
           angular.noop(); // requested state can be transitioned to.
         } else {
           event.preventDefault();
-          // test this
+          $rootScope.$emit('$statePermissionError');
           $state.go(errorState, { error: 'unauthorized' }, { location: false, inherit: false });
         }
       });

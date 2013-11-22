@@ -19,13 +19,15 @@ angular.module('angular-login', [
    * $rootScope.doingResolve is a flag useful to display a spinner on changing states.
    * Some states may require remote data so it will take awhile to load.
    */
+  var resolveDone = function () { $rootScope.doingResolve = false; };
   $rootScope.doingResolve = false;
+
   $rootScope.$on('$stateChangeStart', function () {
     $rootScope.doingResolve = true;
   });
-  $rootScope.$on('$stateChangeSuccess', function () {
-    $rootScope.doingResolve = false;
-  });
+  $rootScope.$on('$stateChangeSuccess', resolveDone);
+  $rootScope.$on('$stateChangeError', resolveDone);
+  $rootScope.$on('$statePermissionError', resolveDone);
 })
 .controller('BodyController', function ($scope, $state, $stateParams, loginService, $http, $timeout) {
   // Expose $state and $stateParams to the <body> tag

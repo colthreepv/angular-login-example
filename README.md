@@ -3,7 +3,7 @@ angular-login-example [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mr
 
 Stand-alone project showing how to make a robust angular application serving access permissions from Server.
 
-#### Changes in `0.2.0`
+#### Changes in `0.2.x`
 A new (polishing) release has been in work for the last months, differences are only in the demo app, not in the service.
 
   * You can now add users in the demo, and they gets displayed in homepage.

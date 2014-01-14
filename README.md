@@ -60,7 +60,7 @@ A new (polishing) release has been in work for the last months, differences are 
 ```bash
 $ git clone https://github.com/mrgamer/angular-login-example.git
 $ cd angular-login-example
-$ npm install && grunt && npm start
+$ npm install && bower install && grunt
 
 # Open browser on http://localhost:8080
 ```

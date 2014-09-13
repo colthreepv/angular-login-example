@@ -239,7 +239,7 @@ The latter is inside the [`resolvePendingstate`](#resolvependingstate) method, c
 Here's a brief call schema of the app and the service, and how they interact with the user request.  
 Bare in mind this is for the user to get a general idea, the real amount of calls might be higher (or slightly different).  
 
-![call schema](https://www.lucidchart.com/publicSegments/view/523d9c78-8e7c-4663-9f73-1c850a00808f/image.png)
+[![call schema](https://www.lucidchart.com/publicSegments/view/523d9c78-8e7c-4663-9f73-1c850a00808f/image.png)](https://www.lucidchart.com/publicSegments/view/523d9c78-8e7c-4663-9f73-1c850a00808f/image.png)
 
 # How to generate correct errors
 

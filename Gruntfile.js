@@ -3,7 +3,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-git-describe');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-concat-sourcemap');
   grunt.loadNpmTasks('grunt-contrib-copy');
@@ -121,8 +120,11 @@ module.exports = function (grunt) {
         options: {
           processContent: function (content, srcpath) {
             // Compiling index.html file!
+            var packageVersion = require('./package.json').version;
             return grunt.template.process(content, {
-              gitRevision: grunt.option('gitRevision')
+              data: {
+                version: packageVersion
+              }
             });
           }
         }
@@ -142,13 +144,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('saveRevision', function () {
-    grunt.event.once('git-describe', function (rev) {
-      grunt.option('gitRevision', rev);
-    });
-    grunt.task.run('git-describe');
-  });
-
   // Build process:
   // - clean build/
   // - creates build/templates-app.js from *.tpl.html files
@@ -157,7 +152,7 @@ module.exports = function (grunt) {
   // - concatenates all the source files in build/app.js - banner with git revision
   // - concatenates all the libraries in build/libs.js
   // - copies index.html over build/
-  grunt.registerTask('build', ['clean', 'html2js', 'less', 'saveRevision', 'concat_sourcemap:app', 'concat_sourcemap:libs', 'copy']);
+  grunt.registerTask('build', ['clean', 'html2js', 'less', 'concat_sourcemap:app', 'concat_sourcemap:libs', 'copy']);
   grunt.registerTask('default', ['clean', 'concat_sourcemap:libs', 'connect', 'watch']);
   grunt.registerTask('test', ['karma']);
 };

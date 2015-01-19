@@ -9,6 +9,7 @@
     "example"
   ],
   "scripts": {
+    "test": "grunt karma",
     "start": "grunt"
   },
   "repository": {

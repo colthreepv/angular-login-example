@@ -63,11 +63,12 @@ module.exports = function (grunt) {
       index: {
         files: 'index.html',
         tasks: ['copy:index']
-      },
-        jsTest: {
-            files: ['test/spec/{,*/}*.js'],
-            tasks: ['karma']
-        }
+      }
+        // Useful for watching / rerunning karma tests
+        // jsTest: {
+        //    files: ['test/spec/{,*/}*.js'],
+        //    tasks: ['karma']
+        //}
     },
     'git-describe': {
       all: {}

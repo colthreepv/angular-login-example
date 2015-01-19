@@ -133,13 +133,13 @@ module.exports = function (grunt) {
         src: ['build/']
       }
     },
-      // Test settings
-      karma: {
-          unit: {
-              configFile: 'test/karma.conf.js',
-              singleRun: true
-          }
+    // Test settings
+    karma: {
+      unit: {
+        configFile: 'test/karma.conf.js',
+        singleRun: true
       }
+    }
   });
 
   grunt.registerTask('saveRevision', function () {

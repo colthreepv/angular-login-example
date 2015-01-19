@@ -63,38 +63,12 @@ module.exports = function (grunt) {
         files: 'index.html',
         tasks: ['copy:index']
       }
-        // Useful for watching / rerunning karma tests
-        // jsTest: {
-        //    files: ['test/spec/{,*/}*.js'],
-        //    tasks: ['karma']
-        //}
+      // Useful for watching / rerunning karma tests
+      // jsTest: {
+      //    files: ['test/spec/{,*/}*.js'],
+      //    tasks: ['karma']
+      //}
     },
-    'git-describe': {
-      all: {}
-    },
-    // Useful in future, when i'll need to minify
-    // concat: {
-    //   buildapp: {
-    //     src: ['src/**/*.js', 'src/*.js'],
-    //     dest: 'build/app.js',
-    //     options: {
-    //       banner: '/*! <%=pkg.name %> v<%=grunt.option("gitRevision") %> | date: <%=grunt.template.today("dd-mm-yyyy") %> */\n'
-    //     }
-    //   },
-    //   buildlibs: {
-    //     src: [
-    //       'libs/angular/angular.js',
-    //       'libs/angular-animate/angular-animate.js',
-    //       'libs/angular-mocks/angular-mocks.js',
-    //       'libs/angular-ui-router/release/angular-ui-router.js'
-    //     ],
-    //     dest: 'build/libs.js'
-    //   },
-    //   together: {
-    //     src: ['build/*.js'],
-    //     dest: 'build/all.js'
-    //   }
-    // },
     concat_sourcemap: {
       options: {
         sourcesContent: true
@@ -148,7 +122,6 @@ module.exports = function (grunt) {
   // - clean build/
   // - creates build/templates-app.js from *.tpl.html files
   // - creates build/style.css from all the .less files
-  // - get git revision in local grunt memory
   // - concatenates all the source files in build/app.js - banner with git revision
   // - concatenates all the libraries in build/libs.js
   // - copies index.html over build/

@@ -1,6 +1,3 @@
-/**
- * Created by DavidWCaraway on 1/18/15.
- */
 describe('Provider: login-service', function () {
     'use strict';
 

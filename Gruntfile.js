@@ -8,6 +8,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-concat-sourcemap');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-karma');
+
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -61,7 +63,11 @@ module.exports = function (grunt) {
       index: {
         files: 'index.html',
         tasks: ['copy:index']
-      }
+      },
+        jsTest: {
+            files: ['test/spec/{,*/}*.js'],
+            tasks: ['karma']
+        }
     },
     'git-describe': {
       all: {}
@@ -125,7 +131,14 @@ module.exports = function (grunt) {
       all: {
         src: ['build/']
       }
-    }
+    },
+      // Test settings
+      karma: {
+          unit: {
+              configFile: 'test/karma.conf.js',
+              singleRun: true
+          }
+      }
   });
 
   grunt.registerTask('saveRevision', function () {
@@ -145,4 +158,5 @@ module.exports = function (grunt) {
   // - copies index.html over build/
   grunt.registerTask('build', ['clean', 'html2js', 'less', 'saveRevision', 'concat_sourcemap:app', 'concat_sourcemap:libs', 'copy']);
   grunt.registerTask('default', ['clean', 'concat_sourcemap:libs', 'connect', 'watch']);
+  grunt.registerTask('test', ['karma']);
 };

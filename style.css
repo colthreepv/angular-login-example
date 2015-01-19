@@ -28,7 +28,7 @@
   margin-bottom: 10px;
 }
 .form-signin .form-input .errors {
-  background-color: #484f57;
+  background-color: #63696f;
   border: 1px solid transparent;
   border-radius: 4px;
   transition: border-color 1s;
@@ -94,10 +94,7 @@
   cursor: progress;
 }
 @media (max-width: 991px) {
-  .hidden-devices,
-  tr.hidden-devices,
-  th.hidden-devices,
-  td.hidden-devices {
+  .hidden-devices {
     display: none !important;
   }
 }

@@ -173,7 +173,7 @@ angular.module('angular-login.home', ['angular-login.grandfather'])
   $scope.users = angular.fromJson(localStorage.getItem('userStorage'));
 });
 
-angular.module('loginService', [])
+angular.module('loginService', ['ui.router'])
 .provider('loginService', function () {
   var userToken = localStorage.getItem('userToken'),
       errorState = 'app.error',
@@ -718,4 +718,4 @@ angular.module('angular-login.register', ['angular-login.grandfather'])
 
 })(typeof exports === 'undefined' ? this : exports);
 
-//@ sourceMappingURL=app.js.map
+//# sourceMappingURL=app.js.map

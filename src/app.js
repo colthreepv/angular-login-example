@@ -14,7 +14,18 @@ angular.module('angular-login', [
 .config(function ($urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
 })
-.run(function ($rootScope) {
+.run(function ($rootScope, $window) {
+  // google analytics
+  $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams) {
+    var realURL = toState.url;
+    if (!!$window.ga) {
+      // resolves variables inside urls, ex: /error/:error in /error/unauthorized
+      for (var v in toParams) {
+        realURL = realURL.replace(':' + v, toParams[v]);
+      }
+      $window.ga('send', 'pageview', realURL);
+    }
+  });
   /**
    * $rootScope.doingResolve is a flag useful to display a spinner on changing states.
    * Some states may require remote data so it will take awhile to load.

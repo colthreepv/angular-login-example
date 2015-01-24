@@ -1,18 +1,11 @@
 {
   "name": "angular-login-example",
   "dependencies": {
-    "bootstrap-ui": "~0.12.0",
+    "bootstrap-ui": "^0.12.0",
     "angular": "^1.3.9",
     "angular-mocks": "^1.3.9",
     "angular-animate": "^1.3.9",
-    "angular-ui-router": "~0.2.0",
-    "bootstrap": "~3.3.1"
-  },
-  "resolutions": {
-    "bootstrap-ui": "~0.12.0",
-    "angular": "^1.3.9",
-    "angular-mocks": "^1.3.9",
-    "angular-animate": "^1.3.9",
-    "bootstrap": "~3.3.1"
+    "angular-ui-router": "^0.2.0",
+    "bootstrap": "^3.3.1"
   }
 }

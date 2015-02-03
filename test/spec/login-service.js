@@ -164,4 +164,40 @@ describe('Provider: login-service', function() {
       expect(loginService.logoutUser).toHaveBeenCalled();
     }));
   });
+
+  describe('authInterceptor', function () {
+
+    it('should add jwt header to requests when authenticated', inject(function ($http, $httpBackend) {
+      var user = {token: 'supersecret'};
+
+      $httpBackend.expectGET('/checkheaders', function (headers) {
+        expect(headers['X-Token']).toEqual(user.token);
+
+        return true;//Have to return true to match the headers
+      }).respond(200);
+
+      //login should set headers
+      loginService.loginHandler(user);
+
+      //Make request which httpBackend will intercept and set the expectation
+      $http.get('/checkheaders');
+
+      //Flush triggers the intercept and resolves the $http promise
+      $httpBackend.flush();
+    }));
+
+    it('should NOT add jwt header to requests when NOT authenticated', inject(function ($http, $httpBackend) {
+
+      $httpBackend.expectGET('/checkheaders', function (headers) {
+        expect(headers).not.toContain('X-Token');
+        return true;//Have to return true to match the headers
+      }).respond(200);
+
+      //Make request which httpBackend will intercept and set the expectation
+      $http.get('/checkheaders');
+
+      //Flush triggers the intercept and resolves the $http promise
+      $httpBackend.flush();
+    }));
+  });
 });

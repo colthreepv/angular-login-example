@@ -75,4 +75,93 @@ describe('Provider: login-service', function() {
 
     });
   });
+
+  describe('managePermissions', function () {
+
+    it('should flag grandfather to resolve the user role when loginService.userRole is null', inject(function ($rootScope) {
+      loginService.doneLoading = true;
+      loginService.pendingStateChange = null;
+
+      var to = {'thisis': 'to'};
+      var toParams = {'thisis': 'toparams'};
+
+      loginService.userRole = null;
+      $rootScope.$broadcast('$stateChangeStart', to, toParams); //trigger the managePermission $on function
+
+      //doneLoading= false triggers the spinner, pendingStateChange triggers grandfather to send a request to the server for role
+      expect(loginService.doneLoading).toBe(false);
+      expect(loginService.pendingStateChange.to).toEqual(to);
+      expect(loginService.pendingStateChange.toParams).toEqual(toParams);
+    }));
+
+    it('should allow state transition if the "to" state has no access level set', inject(function ($rootScope) {
+      loginService.doneLoading = true;
+      loginService.pendingStateChange = null;
+
+      var to = {'this': 'has_no_element_called_access_level'};
+
+      loginService.userRole = 'foo';
+      $rootScope.$broadcast('$stateChangeStart', to); //trigger the managePermission $on function
+
+      expect(loginService.doneLoading).toBe(true);
+      expect(loginService.pendingStateChange).toBe(null);
+    }));
+
+    it('should allow state transition if userRole bitmask matches "to" accessLevel bitmask', inject(function ($rootScope) {
+      loginService.doneLoading = true;
+      loginService.pendingStateChange = null;
+
+      var to = {
+        accessLevel: {
+          bitMask: 2
+        }
+      };
+
+      loginService.userRole = {
+        bitMask: 2
+      };
+
+      $rootScope.$broadcast('$stateChangeStart', to); //trigger the managePermission $on function
+
+      expect(loginService.doneLoading).toBe(true);
+      expect(loginService.pendingStateChange).toBe(null);
+    }));
+
+    it('should go to error state transition if userRole bitmask does NOT match "to" accessLevel bitmask', inject(function ($rootScope, $state) {
+      spyOn($rootScope, '$emit').and.returnValue('foo');
+      spyOn($state, 'go').and.returnValue('foo');
+
+      var to = {
+        accessLevel: {
+          bitMask: 2
+        }
+      };
+
+      loginService.userRole = {
+        bitMask: 1
+      }; // doesn't match the to.accessLevel.bitMask
+
+      $rootScope.$broadcast('$stateChangeStart', to); //trigger the managePermission $on function
+      expect($rootScope.$emit).toHaveBeenCalled();
+      expect($state.go).toHaveBeenCalled();
+    }));
+
+    it('should call logoutUser when a 4xx authorization error occurs', inject(function ($rootScope, $state) {
+      spyOn(loginService, 'logoutUser').and.callThrough();
+      spyOn($state, 'go').and.returnValue('foo');//stub $state.go since it's called at the end when an error occurred
+
+      //Broadcast the stateChangeError as if we're ui-router. we add a 401 error to trigger the logoutUser cal
+      $rootScope.$broadcast('$stateChangeError', {}, {}, {}, {}, 401);
+      expect(loginService.logoutUser).toHaveBeenCalled();
+    }));
+
+    it('should call logoutUser when a 5xx server error occurs', inject(function ($rootScope, $state) {
+      spyOn(loginService, 'logoutUser').and.callThrough();
+      spyOn($state, 'go').and.returnValue('foo');//stub $state.go since it's called at the end when an error occurred
+
+      //Broadcast the stateChangeError as if we're ui-router. we add a 401 error to trigger the logoutUser cal
+      $rootScope.$broadcast('$stateChangeError', {}, {}, {}, {}, 500);
+      expect(loginService.logoutUser).toHaveBeenCalled();
+    }));
+  });
 });

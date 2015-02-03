@@ -167,7 +167,7 @@ describe('Provider: login-service', function() {
 
   describe('authInterceptor', function () {
 
-    it('should add jwt header to requests when authenticated', inject(function ($http, $httpBackend) {
+    it('should add token to http header to requests when authenticated', inject(function ($http, $httpBackend) {
       var user = {token: 'supersecret'};
 
       $httpBackend.expectGET('/checkheaders', function (headers) {
@@ -186,7 +186,7 @@ describe('Provider: login-service', function() {
       $httpBackend.flush();
     }));
 
-    it('should NOT add jwt header to requests when NOT authenticated', inject(function ($http, $httpBackend) {
+    it('should NOT add token to http header to requests when NOT authenticated', inject(function ($http, $httpBackend) {
 
       $httpBackend.expectGET('/checkheaders', function (headers) {
         expect(headers).not.toContain('X-Token');

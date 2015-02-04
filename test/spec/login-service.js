@@ -200,4 +200,116 @@ describe('Provider: login-service', function() {
       $httpBackend.flush();
     }));
   });
+
+  describe('resolvePendingState', function () {
+    it('should call loginService when user data successfully retrieved from the server', inject(function ($http, $httpBackend) {
+
+      var user = {'foo': 'bar'};
+
+      spyOn(loginService, 'loginHandler').and.returnValue(user);
+
+      loginService.pendingStateChange = {to: {}}; //pendingState.to.accessLevel is undefined
+
+      expect(loginService.user).toEqual({});
+      $httpBackend.expectGET('/foo').respond(200, user);
+
+      loginService.resolvePendingState($http.get('/foo'));
+
+      $httpBackend.flush();
+
+      //loginHandler is called by the http promise success, the first arguments is the user data
+      expect(loginService.loginHandler).toHaveBeenCalled();
+
+    }));
+
+    it('should resolve when the "to" access level is undefined after user data successfully retrieved from the server', inject(function ($http, $httpBackend) {
+
+      var user = {'foo': 'bar'};
+
+      spyOn(loginService, 'loginHandler').and.returnValue(user);
+
+      loginService.pendingStateChange = {to: {}}; //pendingState.to.accessLevel is undefined
+
+      expect(loginService.user).toEqual({});
+
+      //Simulate the backend responding with user
+      $httpBackend.expectGET('/foo').respond(200, user);
+
+      //Simulate the call made by grandfather
+      var checkUserPromise = loginService.resolvePendingState($http.get('/foo'));
+
+      //Add a check to make sure the resolve happens
+      var isResolved = false;
+
+      checkUserPromise.then(function resolvedSuccessfully() {
+        isResolved = true;
+      });
+
+      $httpBackend.flush();
+
+      expect(loginService.doneLoading).toBeTruthy();
+      expect(isResolved).toBeTruthy();
+    }));
+
+    it('should resolve when the "to" access level matches the userrole bitmask after user data successfully retrieved from the server', inject(function ($http, $httpBackend) {
+
+      var user = {'foo': 'bar'};
+
+      spyOn(loginService, 'loginHandler').and.returnValue(user);
+
+      loginService.userRole = {bitMask: 2};
+      loginService.pendingStateChange = {to: {accessLevel: {bitMask: 2}}};
+
+      expect(loginService.user).toEqual({});
+
+      //Simulate the backend responding with user
+      $httpBackend.expectGET('/foo').respond(200, user);
+
+      //Simulate the call made by grandfather
+      var checkUserPromise = loginService.resolvePendingState($http.get('/foo'));
+
+      //Add a check to make sure the resolve happens
+      var isResolved = false;
+
+      checkUserPromise.then(function resolvedSuccessfully() {
+        isResolved = true;
+      });
+
+      $httpBackend.flush();
+
+      expect(loginService.doneLoading).toBeTruthy();
+      expect(isResolved).toBeTruthy();
+    }));
+
+    it('should reject when the "to" access level DOES NOT match the userrole bitmask after user data successfully retrieved from the server', inject(function ($http, $httpBackend) {
+
+      var user = {'foo': 'bar'};
+
+      spyOn(loginService, 'loginHandler').and.returnValue(user);
+
+      loginService.userRole = {bitMask: 2};
+      loginService.pendingStateChange = {to: {accessLevel: {bitMask: 1}}};
+
+      expect(loginService.user).toEqual({});
+
+      //Simulate the backend responding with user
+      $httpBackend.expectGET('/foo').respond(200, user);
+
+      //Simulate the call made by grandfather
+      var checkUserPromise = loginService.resolvePendingState($http.get('/foo'));
+
+      //Add a check to make sure the resolve happens
+      var isResolved = false;
+
+      checkUserPromise.then(function resolvedSuccessfully() {
+        isResolved = true;
+      });
+
+      $httpBackend.flush();
+
+      expect(loginService.doneLoading).toBeTruthy();
+      expect(isResolved).toBeFalsy();
+    }));
+
+  });
 });

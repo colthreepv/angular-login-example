@@ -1,4 +1,10 @@
 angular.module('loginService', ['ui.router'])
+  .config(function ($httpProvider) {
+    'use strict';
+    //Interceptor to put the Authorization header in requests if user is authenticated
+    $httpProvider.interceptors.push('authInterceptor');
+
+  })
 .provider('loginService', function () {
   var userToken = localStorage.getItem('userToken'),
       errorState = 'app.error',
@@ -9,27 +15,16 @@ angular.module('loginService', ['ui.router'])
     /**
      * Low-level, private functions.
      */
-    var setHeaders = function (token) {
-      if (!token) {
-        delete $http.defaults.headers.common['X-Token'];
-        return;
-      }
-      $http.defaults.headers.common['X-Token'] = token.toString();
-    };
-
     var setToken = function (token) {
       if (!token) {
         localStorage.removeItem('userToken');
       } else {
         localStorage.setItem('userToken', token);
       }
-      setHeaders(token);
     };
 
     var getLoginData = function () {
-      if (userToken) {
-        setHeaders(userToken);
-      } else {
+      if (!userToken) {
         wrappedService.userRole = userRoles.public;
         wrappedService.isLogged = false;
         wrappedService.doneLoading = true;
@@ -202,4 +197,20 @@ angular.module('loginService', ['ui.router'])
 
     return wrappedService;
   };
-});
+}).factory('authInterceptor', function () {
+    /**
+     * Interceptor will add a header to outgoing requests if and only if the userToken is set in localStorage.
+     * If using JWT, you may want to change the header to 'Authorization' and prepend the token with 'Bearer' or 'JWT'.
+     */
+    'use strict';
+    return {
+      request: function (config) {
+        var token = localStorage.getItem('userToken');
+        if (token) {
+          config.headers['X-Token'] = token;
+        }
+        //TODO future: check for expired token.
+        return config;
+      }
+    };
+  });
